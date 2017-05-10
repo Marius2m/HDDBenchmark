@@ -44,7 +44,7 @@ public class FileSystem {
         return fileBench;
     }
 
-    public boolean delete(){
+    public boolean deleteFile(){
         //returns true if file was successfully deleted
         //returns false if file was not successfully deleted
         return fileBench.delete();
