@@ -2,8 +2,8 @@ package score;
 
 public class Score {
 
-	public Score() {
-		// TODO Auto-generated constructor stub
-	}
+    public Score() {
+        // TODO Auto-generated constructor stub
+    }
 
 }

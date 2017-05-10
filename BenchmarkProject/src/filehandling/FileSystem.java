@@ -16,6 +16,10 @@ public class FileSystem {
         fileBench = new File(path);
     }
 
+    public FileSystem(String path) {
+        fileBench = new File(path);
+    }
+
     public void getUsername() {
         username = System.getProperty("user.name");
     }
@@ -40,11 +44,11 @@ public class FileSystem {
         return desktopPath;
     }
 
-    public File getFile(){
+    public File getFile() {
         return fileBench;
     }
 
-    public boolean deleteFile(){
+    public boolean deleteFile() {
         //returns true if file was successfully deleted
         //returns false if file was not successfully deleted
         return fileBench.delete();
