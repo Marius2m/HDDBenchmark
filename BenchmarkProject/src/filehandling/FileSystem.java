@@ -19,6 +19,8 @@ public class FileSystem {
     }
 
     private void pathBuilder() {
+        getOS();
+        getUsername();
         if (os.equals("Linux")) {
             desktopPath = "/home/" + username + "/Desktop";
         } else if (os.contains("Windows")) {
