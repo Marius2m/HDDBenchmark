@@ -1,20 +1,26 @@
 package filehandling;
 
+import java.io.File;
+
 public class FileSystem {
 
     private String username;
     private String os;
     private String desktopPath;
+    private File fileBench;
 
     public FileSystem() {
         // TODO Auto-generated constructor stub
+        pathBuilder();
+        String path = desktopPath + File.separator + "bench.dat";
+        fileBench = new File(path);
     }
 
-    private void getUsername() {
+    public void getUsername() {
         username = System.getProperty("user.name");
     }
 
-    private void getOS() {
+    public void getOS() {
         os = System.getProperty("os.name");
     }
 
@@ -32,5 +38,15 @@ public class FileSystem {
 
     public String getDesktopPath() {
         return desktopPath;
+    }
+
+    public File getFile(){
+        return fileBench;
+    }
+
+    public boolean delete(){
+        //returns true if file was successfully deleted
+        //returns false if file was not successfully deleted
+        return fileBench.delete();
     }
 }
