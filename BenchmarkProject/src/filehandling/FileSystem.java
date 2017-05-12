@@ -1,6 +1,8 @@
 package filehandling;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
 
 public class FileSystem {
 
@@ -8,16 +10,20 @@ public class FileSystem {
     private String os;
     private String desktopPath;
     private File fileBench;
+    private RandomAccessFile fileBenchRAND;
+    private boolean randFile;
 
-    public FileSystem() {
+    public FileSystem(String access) throws FileNotFoundException {
         // TODO Auto-generated constructor stub
         pathBuilder();
         String path = desktopPath + File.separator + "bench.dat";
         fileBench = new File(path);
-    }
-
-    public FileSystem(String path) {
-        fileBench = new File(path);
+        if (access.toLowerCase().equals("seq")) {
+            randFile = false;
+        } else if (access.toLowerCase().equals("rand")) {
+            fileBenchRAND = new RandomAccessFile(fileBench, "rw");
+            randFile = true;
+        }
     }
 
     public void getUsername() {
@@ -44,9 +50,13 @@ public class FileSystem {
         return desktopPath;
     }
 
-    public File getFile() {
-        return fileBench;
+    public File getFileSEQ() {
+        return fileBench; }
+
+    public RandomAccessFile getFileRAND() {
+        return fileBenchRAND;
     }
+
 
     public boolean deleteFile() {
         //returns true if file was successfully deleted
