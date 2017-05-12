@@ -4,15 +4,19 @@ import java.util.ArrayList;
 
 public class Score {
 
-    private ArrayList<Timer> timers;
+    private long[] times;
     private int nTests;         //number of tests
-    private int fileSize;       //size of File
+    private long fileSize;       //size of File
 
-    public Score() {
+    public Score(int n, long fileSize) {
         // TODO Auto-generated constructor stub
+        this.fileSize = fileSize;
+        this.nTests = n;
     }
 
-    public void start(){
-
+    public void start() {
+        Timer timer = new Timer();
+        timer.start();
     }
+
 }
