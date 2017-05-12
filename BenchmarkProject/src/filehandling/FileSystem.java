@@ -9,7 +9,7 @@ public class FileSystem {
     private String username;
     private String os;
     private String desktopPath;
-    private File fileBench;
+    public File fileBench;
     private RandomAccessFile fileBenchRAND;
     private boolean randFile;
 
@@ -26,11 +26,11 @@ public class FileSystem {
         }
     }
 
-    public void getUsername() {
+    private void getUsername() {
         username = System.getProperty("user.name");
     }
 
-    public void getOS() {
+    private void getOS() {
         os = System.getProperty("os.name");
     }
 
@@ -51,7 +51,8 @@ public class FileSystem {
     }
 
     public File getFileSEQ() {
-        return fileBench; }
+        return fileBench;
+    }
 
     public RandomAccessFile getFileRAND() {
         return fileBenchRAND;
