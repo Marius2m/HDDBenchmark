@@ -14,6 +14,7 @@ public class Score {
         // TODO Auto-generated constructor stub
         this.fileSize = fileSize;
         this.nTests = n;
+        times = new double[n];
     }
 
     public void start() {
@@ -28,9 +29,14 @@ public class Score {
 
     public double getScore() {
         this.stop();
-        double score = 0;
-        score = fileSize / (1024*1024 * 1024);  // MB/s
+        double score;
+        score = (1024 * fileSize) / times[0];  // MB/s
         return score;
+    }
+
+    public String toString() {
+        String message = (1024 * fileSize) / times[0] + " MB/s";
+        return message;
     }
 
 }
