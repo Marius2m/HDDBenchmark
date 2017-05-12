@@ -27,8 +27,9 @@ public class Score {
     }
 
     public double getScore() {
+        this.stop();
         double score = 0;
-        score = fileSize / (1024 * 1024);  // MB/s
+        score = fileSize / (1024*1024 * 1024);  // MB/s
         return score;
     }
 
