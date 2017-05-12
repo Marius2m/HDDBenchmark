@@ -10,7 +10,7 @@ public class Score {
     private Timer timer = new Timer();
     private static int counter = 0;
 
-    public Score(int n, long fileSize) {
+    public Score(int n, double fileSize) {
         // TODO Auto-generated constructor stub
         this.fileSize = fileSize;
         this.nTests = n;
@@ -28,7 +28,7 @@ public class Score {
 
     public double getScore() {
         double score = 0;
-        score = fileSize / (1024 * 1024);
+        score = fileSize / (1024 * 1024);  // MB/s
         return score;
     }
 

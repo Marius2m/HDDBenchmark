@@ -2,8 +2,13 @@ package accesstype;
 
 public abstract class Access {
 
-	public Access() {
-		// TODO Auto-generated constructor stub
+	public void read(int blockSize, double fileSize){
+
 	}
+
+	public void write(int blockSize, int fileSize){
+
+	}
+
 
 }

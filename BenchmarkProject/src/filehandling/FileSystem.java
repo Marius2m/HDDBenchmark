@@ -9,21 +9,17 @@ public class FileSystem {
     private String username;
     private String os;
     private String desktopPath;
-    public File fileBench;
-    private RandomAccessFile fileBenchRAND;
-    private boolean randFile;
+    private String path;
+    private static int cnt = 0;
 
-    public FileSystem(String access) throws FileNotFoundException {
-        // TODO Auto-generated constructor stub
+    public FileSystem() {
         pathBuilder();
-        String path = desktopPath + File.separator + "bench.dat";
-        fileBench = new File(path);
-        if (access.toLowerCase().equals("seq")) {
-            randFile = false;
-        } else if (access.toLowerCase().equals("rand")) {
-            fileBenchRAND = new RandomAccessFile(fileBench, "rw");
-            randFile = true;
-        }
+    }
+
+    public String getFilePath(){
+        path = desktopPath + File.separator + "bench" + cnt + ".dat";
+        cnt++;
+        return path;
     }
 
     private void getUsername() {
@@ -46,22 +42,19 @@ public class FileSystem {
         }
     }
 
-    public String getDesktopPath() {
+    private String getDesktopPath() {
         return desktopPath;
     }
 
-    public File getFileSEQ() {
-        return fileBench;
-    }
 
-    public RandomAccessFile getFileRAND() {
-        return fileBenchRAND;
-    }
-
-
-    public boolean deleteFile() {
+    public boolean deleteFile(File file) {
         //returns true if file was successfully deleted
         //returns false if file was not successfully deleted
-        return fileBench.delete();
+        return file.delete();
     }
+
+    public void endTests(){
+        cnt = 0;
+    }
+
 }
