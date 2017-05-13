@@ -38,6 +38,27 @@ public class WriteSpeed {
             access = new RandomAccess();
     }
 
+    public void write() {
+        for (int i = 0; i < numTests; i++) {
+            score.start();
+            access.write(fileSizeGB, bufferSize);
+            score.stop();
+        }
+    }
+
+    public double getAvgScore() {
+        return score.getAvgSpeed();
+    }
+
+    public double getMinScore() {
+        return score.getMinSpeed();
+    }
+
+    public double getMaxScore() {
+        return score.getMaxSpeed();
+    }
+
+
     private boolean isSequentialFile(){
         if(accessType.toLowerCase().contains("seq"))
             return true;
