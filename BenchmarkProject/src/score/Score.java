@@ -1,5 +1,6 @@
 package score;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Score {
@@ -11,6 +12,16 @@ public class Score {
     private double avgSpeed = 0;
     private double minSpeed = Double.MAX_VALUE;
     private double maxSpeed = 0;
+
+    //DecimalFormat avgSpeed = new DecimalFormat("#.00");
+    //DecimalFormat minSpeed = new DecimalFormat("#.00");
+    //DecimalFormat maxSpeed = new DecimalFormat("#.00");
+
+    private double roundTwoDecimals(double n) {
+        n = Math.round(n * 100);
+        n = n / 100.0;
+        return n;
+    }
 
     public Score(int n, double fileSize) {
         this.fileSize = fileSize * 1024;        //convert GB to MB
@@ -26,6 +37,7 @@ public class Score {
         long time = timer.stop();
         double score;
         score = fileSize / (time / (1000 * 1000 * 1000));  // MB/s
+        score = roundTwoDecimals(score);
         avgSpeed += score;
 
         if (score < minSpeed) minSpeed = score;
