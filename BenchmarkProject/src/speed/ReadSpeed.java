@@ -75,7 +75,7 @@ public class ReadSpeed {
 	}
 
 	private boolean isSequentialFile(){
-		if(accessType.toLowerCase().contains("SEQ"))
+		if(accessType.toLowerCase().contains("seq"))
 			return true;
 		else
 			return false;
