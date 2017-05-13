@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Score {
 
-    private double[] times;
     private double fileSize;       //size of File
     private Timer timer = new Timer();
     private int counter = 0;
@@ -14,7 +13,6 @@ public class Score {
     private double maxSpeed = 0;
 
     public Score(int n, double fileSize) {
-        // TODO Auto-generated constructor stub
         this.fileSize = fileSize * 1024;        //convert GB to MB
         this.nTests = n;
     }
@@ -24,7 +22,7 @@ public class Score {
         counter++;
     }
 
-    public double stop() {
+    public void stop() {
         long time = timer.stop();
         double score;
         score = fileSize / (time / (1000 * 1000 * 1000));  // MB/s
@@ -34,7 +32,6 @@ public class Score {
         else if (score > maxSpeed) maxSpeed = score;
 
         if (counter == nTests) avgSpeed /= nTests;
-        return score;
     }
 
     private void avgSpeed() {
@@ -42,14 +39,6 @@ public class Score {
         for (int i = 0; i < counter; i++) {
         }
         avgSpeed = sum / counter;
-    }
-
-
-    public double getScore() {
-        this.stop();
-        double score;
-        score = (1024 * fileSize) / (times[0] / 1000 * 1000 * 1000);  // MB/s
-        return score;
     }
 
     public double getMinSpeed() {
@@ -62,11 +51,6 @@ public class Score {
 
     public double getAvgSpeed() {
         return avgSpeed;
-    }
-    
-    public String toString() {
-        String message = fileSize / (times[0] / 1000 * 1000 * 1000) + " MB/s";
-        return message;
     }
 
 }
