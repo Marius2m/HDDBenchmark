@@ -15,24 +15,20 @@ public class ReadSpeed {
 	private int bufferSize = 2 * 1024 * 1024; //2 MB default
 	private String accessType = "SEQ";        //sequential access by default
 	private int numTests = 5;                 //5 tests default
-	private double fileSizeGB = 1;			      //1 GB file size by default
-	private double maxScore;
-	private double minScore = Double.MAX_VALUE; //initial score is the largest integer value for further comparisons
-	private double avgScore;
+	private int fileSizeGB = 9;			      //1 GB file size by default
+	private Score score;
 
 	/**
 	 *  Used if benchmark should run with default configurations:
 	 *  	-2 MB block size
 	 *  	-sequential access in file
 	 *  	-5 tests in total
-	 *  	-1 GB file size
+	 *  	-9 GB file size
 	 */
 	public ReadSpeed() {
-		access = new SequentialAccess();
+		score = new Score(numTests, fileSizeGB);
+		access = new SequentialAccess(numTests);
 	}
-
-
-
 
 	/**
 	 * Used if benchmark should run with user inputed configurations
@@ -48,30 +44,34 @@ public class ReadSpeed {
 		this.numTests = numTests;
 		this.fileSizeGB = fileSizeGB;
 		if(isSequentialFile())
-			access = new SequentialAccess();
+			access = new SequentialAccess(numTests);
 		else
 			access = new RandomAccess();
 	}
-
-
 
 	/**
 	 * The method reads a file with a given buffer size for a number of times and then computes the minimum
 	 * maximum and average of the scores obtained
 	 */
 	public void read() {
-		Score score = new Score(numTests, fileSizeGB);
+		access.write(fileSizeGB);       //first write the file that will be used for reading
 		for(int i = 0; i < numTests; i++){
 			score.start();
-			access.read(bufferSize, fileSizeGB);
-			double crntScore = score.getScore();
-			if(crntScore > maxScore)
-				maxScore = crntScore;
-			else if (crntScore < minScore)
-				minScore = crntScore;
-			avgScore += crntScore;
+			access.read(fileSizeGB, bufferSize);
+			score.stop();
 		}
-		avgScore = avgScore / numTests;
+	}
+
+	public double getAvgScore(){
+		return score.getAvgSpeed();
+	}
+
+	public double getMinScore(){
+		return score.getMinSpeed();
+	}
+
+	public double getMaxScore(){
+		return score.getMaxSpeed();
 	}
 
 	private boolean isSequentialFile(){
@@ -82,6 +82,8 @@ public class ReadSpeed {
 	}
 
 	public static void main(String[] args){
-
+		ReadSpeed readSpeed = new ReadSpeed();
+		readSpeed.read();
+		System.out.println(readSpeed.getAvgScore() + " " + readSpeed.getMaxScore() + " " + readSpeed.getMinScore());
 	}
 }
