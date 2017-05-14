@@ -35,7 +35,7 @@ public class WriteSpeed {
         if(isSequentialFile())
             access = new SequentialAccess(numTests);
         else
-            access = new RandomAccess();
+            access = new RandomAccess(numTests, fileSizeGB);
     }
 
     public void write() {

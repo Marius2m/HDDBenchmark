@@ -3,7 +3,6 @@ package speed;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
-
 import accesstype.Access;
 import accesstype.RandomAccess;
 import accesstype.SequentialAccess;
@@ -16,15 +15,16 @@ public class ReadSpeed {
     private int bufferSize = 2 * 1024 * 1024; //2 MB default
     private String accessType = "SEQ";        //sequential access by default
     private int numTests = 5;                 //5 tests default
-    private int fileSizeGB = 9;                  //1 GB file size by default
+    private int fileSizeGB = 9;			      //1 GB file size by default
     private Score score;
+    private static final int REPEAT = 100_000;
 
     /**
-     * Used if benchmark should run with default configurations:
-     * -2 MB block size
-     * -sequential access in file
-     * -5 tests in total
-     * -9 GB file size
+     *  Used if benchmark should run with default configurations:
+     *  	-2 MB block size
+     *  	-sequential access in file
+     *  	-5 tests in total
+     *  	-9 GB file size
      */
     public ReadSpeed() {
         score = new Score(numTests, fileSizeGB);
@@ -33,7 +33,6 @@ public class ReadSpeed {
 
     /**
      * Used if benchmark should run with user inputed configurations
-     *
      * @param bufferSize
      * @param accessType
      * @param numTests
@@ -45,10 +44,15 @@ public class ReadSpeed {
         this.accessType = accessType;
         this.numTests = numTests;
         this.fileSizeGB = fileSizeGB;
-        if (isSequentialFile())
+        if(isSequentialFile())	{
+            score = new Score(numTests, fileSizeGB);
             access = new SequentialAccess(numTests);
-        else
-            access = new RandomAccess();
+        }
+        else{
+            double size = bufferSize * ((double)REPEAT /1024/1024/1024);
+            score = new Score(numTests, size);
+            access = new RandomAccess(REPEAT, numTests);
+        }
     }
 
     /**
@@ -57,34 +61,34 @@ public class ReadSpeed {
      */
     public void read() {
         access.write(fileSizeGB);       //first write the file that will be used for reading
-        for (int i = 0; i < numTests; i++) {
+        for(int i = 0; i < numTests; i++){
             score.start();
             access.read(fileSizeGB, bufferSize);
             score.stop();
         }
     }
 
-    public double getAvgScore() {
+    public double getAvgScore(){
         return score.getAvgSpeed();
     }
 
-    public double getMinScore() {
+    public double getMinScore(){
         return score.getMinSpeed();
     }
 
-    public double getMaxScore() {
+    public double getMaxScore(){
         return score.getMaxSpeed();
     }
 
-    private boolean isSequentialFile() {
-        if (accessType.toLowerCase().contains("seq"))
+    private boolean isSequentialFile(){
+        if(accessType.toLowerCase().contains("seq"))
             return true;
         else
             return false;
     }
 
-    public static void main(String[] args) {
-        ReadSpeed readSpeed = new ReadSpeed();
+    public static void main(String[] args){
+        ReadSpeed readSpeed = new ReadSpeed(1024 , "rand", 4, 1);
         readSpeed.read();
         System.out.println(readSpeed.getAvgScore() + " " + readSpeed.getMaxScore() + " " + readSpeed.getMinScore());
     }

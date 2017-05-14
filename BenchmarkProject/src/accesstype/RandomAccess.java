@@ -1,9 +1,91 @@
 package accesstype;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Random;
+
+import filehandling.FileSystem;
+
 public class RandomAccess extends Access {
 
-	public RandomAccess() {
-		// TODO Auto-generated constructor stub
-	}
+    private FileSystem fs;
+    private File file;
+    private RandomAccessFile raf;
+    private static final int GB_TO_BYTES = 1024 * 1024 * 1024;
+    private static final int FILL_BUFFER_SIZE = 4 * 1024 * 1024;
+    private int repeat;
+    private int cntTests;  //how many tests have been run on this file
+
+    public RandomAccess(int repeat, int numTests) {
+        super(numTests);
+        this.repeat = repeat;
+        fs = new FileSystem();
+        try {
+            file = new File(fs.getFilePath());
+            raf = new RandomAccessFile(file, "rw");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void read(int fileSize, int bufferSize){
+        Random rand = new Random();
+        long fSize = GB_TO_BYTES;
+        fSize = fSize * fileSize;
+        byte[] buf = new byte[bufferSize];
+
+        for(int i = 0; i < repeat; i++)
+            try {
+                raf.seek(rand.nextInt(Integer.MAX_VALUE));
+                raf.read(buf);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        if(super.shouldDeleteFile(++cntTests)){
+            cntTests = 0;
+            fs.deleteFile(file);
+        }
+    }
+
+    public void write(int fileSize){
+        long fSize = GB_TO_BYTES;
+        fSize = fSize * fileSize;
+        byte[] buf = new byte[FILL_BUFFER_SIZE];
+        long crntWrittenSize = 0;
+
+        while(crntWrittenSize < fSize)
+            try {
+                fillBuffer(buf);
+                raf.write(buf);
+                crntWrittenSize += FILL_BUFFER_SIZE;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public void write(int fileSize, int bufferSize){
+        Random rand = new Random();
+        long fSize = GB_TO_BYTES;
+        fSize = fSize * fileSize;			  //actual file size in bytes
+        byte[] buf = new byte[bufferSize];    //buffer used for reading
+
+        for(int i = 0; i < repeat; i++){
+            try {
+                raf.seek(rand.nextInt(Integer.MAX_VALUE));	//seek a random position in the file
+                fillBuffer(buf);				//put random values in the buffer
+                raf.write(buf);					//write the values from the buffer in the file
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private void fillBuffer(byte[] bytes){
+        Random rand = new Random();
+        rand.nextBytes(bytes);
+    }
 
 }
