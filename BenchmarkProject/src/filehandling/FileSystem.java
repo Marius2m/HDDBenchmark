@@ -48,9 +48,7 @@ public class FileSystem {
 
 
     public boolean deleteFile(File file) {
-        //returns true if file was successfully deleted
-        //returns false if file was not successfully deleted
-        return file.delete();
+        return file.delete();  //returns true if file was successfully deleted
     }
 
     public void endTests(){

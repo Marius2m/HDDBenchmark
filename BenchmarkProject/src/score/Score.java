@@ -11,9 +11,9 @@ public class Score {
     private double minSpeed = Double.MAX_VALUE;
     private double maxSpeed = 0;
 
-    private double roundTwoDecimals(double n) {
-        n = Math.round(n * 100);
-        n = n / 100.0;
+    private double roundThreeDecimals(double n) {
+        n = Math.round(n * 1000);
+        n = n / 1000.0;
         return n;
     }
 
@@ -31,7 +31,7 @@ public class Score {
         long time = timer.stop();
         double score;
         score = fileSize / (time / (1000 * 1000 * 1000));  // MB/s
-        score = roundTwoDecimals(score);
+        //score = roundTwoDecimals(score);
         avgSpeed += score;
 
         if (score < minSpeed) minSpeed = score;
@@ -48,15 +48,15 @@ public class Score {
     }
 
     public double getMinSpeed() {
-        return minSpeed;
+        return roundThreeDecimals(minSpeed);
     }
 
     public double getMaxSpeed() {
-        return maxSpeed;
+        return roundThreeDecimals(maxSpeed);
     }
 
     public double getAvgSpeed() {
-        return avgSpeed;
+        return roundThreeDecimals(avgSpeed);
     }
 
 }

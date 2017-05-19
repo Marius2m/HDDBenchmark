@@ -15,7 +15,7 @@ public class ReadSpeed {
     private int bufferSize = 2 * 1024 * 1024; //2 MB default
     private String accessType = "SEQ";        //sequential access by default
     private int numTests = 5;                 //5 tests default
-    private int fileSizeGB = 9;			      //1 GB file size by default
+    private int fileSizeGB = 8;			      //1 GB file size by default
     private Score score;
     private static final int REPEAT = 100_000;
 
@@ -49,7 +49,7 @@ public class ReadSpeed {
             access = new SequentialAccess(numTests);
         }
         else{
-            double size = bufferSize * ((double)REPEAT /1024/1024/1024);
+            double size = ((double)bufferSize /1024/1024/1024) * REPEAT;
             score = new Score(numTests, size);
             access = new RandomAccess(REPEAT, numTests);
         }
@@ -88,7 +88,7 @@ public class ReadSpeed {
     }
 
     public static void main(String[] args){
-        ReadSpeed readSpeed = new ReadSpeed(1024 , "rand", 4, 1);
+        ReadSpeed readSpeed = new ReadSpeed();
         readSpeed.read();
         System.out.println(readSpeed.getAvgScore() + " " + readSpeed.getMaxScore() + " " + readSpeed.getMinScore());
     }
