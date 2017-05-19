@@ -13,6 +13,7 @@ public class WriteSpeed {
     private int numTests = 5;                 //5 tests default
     private int fileSizeGB = 9;               //1 GB file size by default
     private Score score;
+    private static final int REPEAT = 100_000;
 
     /*
      * Default settings:
@@ -27,15 +28,19 @@ public class WriteSpeed {
     }
 
 
-    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeGB){
+    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeGB) {
         this.bufferSize = bufferSize;
         this.accessType = accessType;
         this.numTests = numTests;
         this.fileSizeGB = fileSizeGB;
-        if(isSequentialFile())
+        if (isSequentialFile()) {
+            score = new Score(numTests, fileSizeGB);
             access = new SequentialAccess(numTests);
-        else
+        } else {
+            double size = ((double) bufferSize / 1024 / 1024 / 1024) * REPEAT;
+            score = new Score(numTests, fileSizeGB);
             access = new RandomAccess(numTests, fileSizeGB);
+        }
     }
 
     public void write() {
@@ -59,8 +64,8 @@ public class WriteSpeed {
     }
 
 
-    private boolean isSequentialFile(){
-        if(accessType.toLowerCase().contains("seq"))
+    private boolean isSequentialFile() {
+        if (accessType.toLowerCase().contains("seq"))
             return true;
         else
             return false;
