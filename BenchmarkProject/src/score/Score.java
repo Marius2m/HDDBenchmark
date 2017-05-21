@@ -11,15 +11,15 @@ public class Score {
     private double minSpeed = Double.MAX_VALUE;
     private double maxSpeed = 0;
 
+    public Score(int n, double fileSize) {
+        this.fileSize = fileSize;//* 1024;        //convert GB to MB
+        this.nTests = n;
+    }
+
     private double roundThreeDecimals(double n) {
         n = Math.round(n * 1000);
         n = n / 1000.0;
         return n;
-    }
-
-    public Score(int n, double fileSize) {
-        this.fileSize = fileSize * 1024;        //convert GB to MB
-        this.nTests = n;
     }
 
     public void start() {
@@ -29,22 +29,15 @@ public class Score {
 
     public void stop() {
         long time = timer.stop();
+        time = time / (1000_000_000);  //convert from nanoseconds to seconds
         double score;
-        score = fileSize / (time / (1000 * 1000 * 1000));  // MB/s
+        score = fileSize / time;  // MB/s
         //score = roundTwoDecimals(score);
         avgSpeed += score;
-
+        System.out.println("Test " + counter + " = " + score + " MB/s");
         if (score < minSpeed) minSpeed = score;
-        else if (score > maxSpeed) maxSpeed = score;
-
+        if (score > maxSpeed) maxSpeed = score;
         if (counter == nTests) avgSpeed /= nTests;
-    }
-
-    private void avgSpeed() {
-        double sum = 0;
-        for (int i = 0; i < counter; i++) {
-        }
-        avgSpeed = sum / counter;
     }
 
     public double getMinSpeed() {

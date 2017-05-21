@@ -7,13 +7,13 @@ import score.Score;
 
 public class WriteSpeed {
 
+    private static final int REPEAT = 100_000;
     private Access access;
-    private int bufferSize = 2 * 1024 * 1024; //2 MB default
+    private int bufferSize = 2 * 1024 * 1024; //2 MB default   // measured in bytes
     private String accessType = "SEQ";        //sequential access by default
     private int numTests = 5;                 //5 tests default
     private int fileSizeGB = 9;               //1 GB file size by default
     private Score score;
-    private static final int REPEAT = 100_000;
 
     /*
      * Default settings:

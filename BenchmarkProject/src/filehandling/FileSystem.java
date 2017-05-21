@@ -17,7 +17,8 @@ public class FileSystem {
     }
 
     public String getFilePath(){
-        path = desktopPath + File.separator + "bench" + cnt + ".dat";
+        //path = desktopPath + File.separator + "bench" + cnt + ".dat";
+        path = "/Volumes/Whatever" + File.separator + "bench" + cnt + ".dat";       //testing path
         cnt++;
         return path;
     }

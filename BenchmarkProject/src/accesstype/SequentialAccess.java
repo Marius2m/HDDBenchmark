@@ -14,11 +14,11 @@ import filehandling.FileSystem;
 
 public class SequentialAccess extends Access {
 
-    private File file;
-    private FileSystem fs;
     //private ByteBuffer buf;
     private static final int BUFFER_FILL_SIZE = 4 * 1024 * 1024; // 4 MB for the buffer filler
-    private static final int GB_TO_BYTE = 1024 * 1024 * 1024;    // for conversion of the file size from GB to bytes
+    private static final int GB_TO_BYTE = 1024 * 1024;    // for conversion of the file size from GB to bytes
+    private File file;
+    private FileSystem fs;
     private int cntTests;
 
     public SequentialAccess(int numTests) {
@@ -71,6 +71,11 @@ public class SequentialAccess extends Access {
                 crntWrittenSize += bufferSize;       //update the total amount of bytes written so far in the file
             }
             out.close();
+            if (super.shouldDeleteFile(++cntTests)) {
+                System.out.println("File has been deleted(Code: \" haha222\")");
+                fs.deleteFile(file);               //delete the temp file after benchmark finishes
+                cntTests = 0;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
