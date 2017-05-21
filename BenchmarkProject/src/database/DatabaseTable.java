@@ -99,7 +99,7 @@ public class DatabaseTable extends JFrame {
             return double1.compareTo(double2);
         }
     }
-	//method that enable column sorting when clicking on column headers
+	//method that enables filtering using the JTextField "search"
 	public void newFilter() {
 		RowFilter<DefaultTableModel, Object> rf = null;
 		try {
