@@ -17,14 +17,14 @@ public class FileSystem {
     }
 
     public String getFilePath(){
-        path = desktopPath + File.separator + "bench" + cnt + ".dat";
+    	path = desktopPath + File.separator + "bench" + cnt + ".dat";
         //path = "/Volumes/Whatever" + File.separator + "bench" + cnt + ".dat";       //testing path
         //path = "/Volumes/Kingston_64" + File.separator + "bench" + cnt + ".dat";       //testing path
         //path = "/Volumes/Kingston1" + File.separator + "bench" + cnt + ".dat";       //testing path
         cnt++;
         return path;
     }
-
+    
     private void getUsername() {
         username = System.getProperty("user.name");
     }
@@ -53,9 +53,9 @@ public class FileSystem {
     public boolean deleteFile(File file) {
         return file.delete();  //returns true if file was successfully deleted
     }
-
+    
     public void endTests(){
-        cnt = 0;
+    	cnt = 0;
     }
-
+    
 }

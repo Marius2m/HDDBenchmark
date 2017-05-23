@@ -3,7 +3,7 @@ package score;
 
 public class Score {
 
-    private double fileSize;       //size of File
+    private double fileSize;       //size of File in MB
     private Timer timer = new Timer();
     private int counter = 0;
     private int nTests;
@@ -11,15 +11,15 @@ public class Score {
     private double minSpeed = Double.MAX_VALUE;
     private double maxSpeed = 0;
 
-    public Score(int n, double fileSize) {
-        this.fileSize = fileSize;//* 1024;        //convert GB to MB
-        this.nTests = n;
+    private double roundThreeDecimals(double n) {
+        long temp = Math.round(n * 1000);
+        n = temp / 1000.0;
+        return n;
     }
 
-    private double roundThreeDecimals(double n) {
-        n = Math.round(n * 1000);
-        n = n / 1000.0;
-        return n;
+    public Score(int n, double fileSize) {
+        this.fileSize = fileSize;      
+        this.nTests = n;
     }
 
     public void start() {
@@ -28,15 +28,14 @@ public class Score {
     }
 
     public void stop() {
-        double time = timer.stop();
-        time = time / (1000_000_000);  //convert from nanoseconds to seconds
+        long time = timer.stop();
         double score;
-        score = fileSize / time;  // MB/s
-        //score = roundTwoDecimals(score);
+        score = fileSize / ((double)time / (1000 * 1000 * 1000));  // MB/s
         avgSpeed += score;
-        System.out.println("Test " + counter + " = " + score + " MB/s");
+
         if (score < minSpeed) minSpeed = score;
         if (score > maxSpeed) maxSpeed = score;
+
         if (counter == nTests) avgSpeed /= nTests;
     }
 
