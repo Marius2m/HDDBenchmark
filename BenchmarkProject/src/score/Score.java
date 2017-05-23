@@ -28,7 +28,7 @@ public class Score {
     }
 
     public void stop() {
-        long time = timer.stop();
+        double time = timer.stop();
         time = time / (1000_000_000);  //convert from nanoseconds to seconds
         double score;
         score = fileSize / time;  // MB/s
