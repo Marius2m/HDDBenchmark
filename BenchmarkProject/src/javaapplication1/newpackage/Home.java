@@ -5,12 +5,21 @@
  */
 package javaapplication1.newpackage;
 
+import database.BenchMarkDatabase;
+import database.Driver;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import speed.ReadSpeed;
+import speed.WriteSpeed;
+import javax.swing.ButtonGroup;
 
 /**
  *
@@ -24,8 +33,12 @@ public class Home extends javax.swing.JFrame {
     private boolean isHelpClicked            = false;
     public  boolean results                  = false;
     public  String  ReadWriteString          = "1";
+    public  String  SSDHDDString             = "1";
     private boolean isDefaultTextName        = true;
     private boolean isDefaultTextLaptopModel = true;
+    private boolean ranTest                  = false;
+    
+    private double avgScore;
     
     int xx;
     int xy;
@@ -35,13 +48,46 @@ public class Home extends javax.swing.JFrame {
      */
     public Home() {
         initComponents();
-        rb_Sequential.setSelected(true);
-       // this.setExtendedState(ICONIFIED);
-        //this.setExtendedState(JFrame.ICONIFIED);﻿
-      //  jButton1.addActionListener(this.);
+        setIcon();
+        
+        this.setLocationRelativeTo(null); // launch in the center of User screen
+        
+        rb_Sequential.setSelected(true); // Sequential is set as default
+        rb_read.setSelected(true); // Read is set as default
+        //rb_write.setSelected(false); // Write is 
+        
+        //Hover Menu Buttons
+        isRunTestClicked = false;
+        isConfigureTestClicked = true;
+        isUploadScoreClicked = false;
+        isHelpClicked = false;
+        
+        setLblColor(lbl_ConfigureTest); // Configure Test Panel is the default one
+       
+        groupButton(); 
       
     }
 
+    /**
+     * Grouping for Upload Score RBs and Configure Test RBs
+     */
+    private void groupButton(){
+        // SSD or HDD -> Upload Score
+        ButtonGroup bg1 = new ButtonGroup();
+        bg1.add(rb_ssd);
+        bg1.add(rd_hdd);
+        
+        // Access Type -> Configure Test
+        ButtonGroup bg2 = new ButtonGroup();
+        bg2.add(rb_RandomAccess);
+        bg2.add(rb_Sequential);
+        
+        // Read or Write -> Configure Test
+        ButtonGroup bg3 = new ButtonGroup();
+        bg3.add(rb_read);
+        bg3.add(rb_write);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -58,19 +104,25 @@ public class Home extends javax.swing.JFrame {
         lbl_Help = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        ConfigureTest = new javax.swing.JPanel();
+        ConfigureTestRead = new javax.swing.JPanel();
         rb_RandomAccess = new javax.swing.JRadioButton();
         rb_Sequential = new javax.swing.JRadioButton();
         lbl_RandomAccess = new javax.swing.JLabel();
         lbl_Sequential = new javax.swing.JLabel();
+        lbl_read = new javax.swing.JLabel();
+        lbl_write = new javax.swing.JLabel();
+        rb_write = new javax.swing.JRadioButton();
+        rb_read = new javax.swing.JRadioButton();
         lbl_NumberOfTests = new javax.swing.JLabel();
         lbl_FileSize = new javax.swing.JLabel();
         lbl_BlockSize = new javax.swing.JLabel();
         cb_NumberOfTests = new javax.swing.JComboBox<>();
-        cb_FileSize = new javax.swing.JComboBox<>();
-        cb_BlockSize = new javax.swing.JComboBox<>();
+        cb_blockSize = new javax.swing.JComboBox<>();
+        cb_fileSize = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        button_defaultConfiguration = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         RunConfiguration = new javax.swing.JPanel();
         jt_random = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
@@ -78,8 +130,27 @@ public class Home extends javax.swing.JFrame {
         jt_nr = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         testtext = new javax.swing.JTextField();
+        button_start = new javax.swing.JLabel();
+        button_stop = new javax.swing.JLabel();
+        lbl_transferRate = new javax.swing.JLabel();
+        lbl_readTR = new javax.swing.JLabel();
+        tf_minRead = new javax.swing.JTextField();
+        tf_avgRead = new javax.swing.JTextField();
+        tf_maxRead = new javax.swing.JTextField();
+        lbl_writeTR = new javax.swing.JLabel();
+        tf_minWrite = new javax.swing.JTextField();
+        tf_avgWrite = new javax.swing.JTextField();
+        tf_maxWrite = new javax.swing.JTextField();
+        lbl_min = new javax.swing.JLabel();
+        lbl_avg = new javax.swing.JLabel();
+        lbl_max = new javax.swing.JLabel();
+        tf_avgWrite1 = new javax.swing.JTextField();
+        tf_avgWrite2 = new javax.swing.JTextField();
+        tf_avgWrite3 = new javax.swing.JTextField();
+        tf_avgWrite4 = new javax.swing.JTextField();
+        tf_avgWrite5 = new javax.swing.JTextField();
+        tf_avgWrite6 = new javax.swing.JTextField();
         UploadScore = new javax.swing.JPanel();
         lbl_information = new javax.swing.JLabel();
         lbl_name = new javax.swing.JLabel();
@@ -93,8 +164,8 @@ public class Home extends javax.swing.JFrame {
         rb_ssd = new javax.swing.JRadioButton();
         lbl_hdd = new javax.swing.JLabel();
         rd_hdd = new javax.swing.JRadioButton();
-        lbl_selectDrive1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        lbl_scoreResult = new javax.swing.JLabel();
+        tf_score = new javax.swing.JTextField();
         lbl_BUpload = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -110,6 +181,9 @@ public class Home extends javax.swing.JFrame {
             }
         });
         addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
             }
@@ -248,58 +322,56 @@ public class Home extends javax.swing.JFrame {
         jPanel2.setPreferredSize(new java.awt.Dimension(650, 400));
         jPanel2.setLayout(new java.awt.CardLayout());
 
-        rb_RandomAccess.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                rb_RandomAccessMouseClicked(evt);
-            }
-        });
-        rb_RandomAccess.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rb_RandomAccessActionPerformed(evt);
-            }
-        });
-
-        rb_Sequential.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                rb_SequentialMouseClicked(evt);
-            }
-        });
-        rb_Sequential.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rb_SequentialActionPerformed(evt);
-            }
-        });
+        ConfigureTestRead.setLayout(null);
+        ConfigureTestRead.add(rb_RandomAccess);
+        rb_RandomAccess.setBounds(550, 260, 21, 21);
+        ConfigureTestRead.add(rb_Sequential);
+        rb_Sequential.setBounds(550, 220, 21, 21);
 
         lbl_RandomAccess.setText("Random Access");
+        ConfigureTestRead.add(lbl_RandomAccess);
+        lbl_RandomAccess.setBounds(410, 260, 130, 14);
 
         lbl_Sequential.setText("Sequential Access");
+        ConfigureTestRead.add(lbl_Sequential);
+        lbl_Sequential.setBounds(410, 220, 130, 14);
+
+        lbl_read.setText("Read");
+        ConfigureTestRead.add(lbl_read);
+        lbl_read.setBounds(410, 140, 80, 14);
+
+        lbl_write.setText("Write");
+        ConfigureTestRead.add(lbl_write);
+        lbl_write.setBounds(410, 180, 70, 14);
+        ConfigureTestRead.add(rb_write);
+        rb_write.setBounds(550, 180, 21, 21);
+        ConfigureTestRead.add(rb_read);
+        rb_read.setBounds(550, 140, 21, 21);
 
         lbl_NumberOfTests.setText("Number of Tests");
+        ConfigureTestRead.add(lbl_NumberOfTests);
+        lbl_NumberOfTests.setBounds(50, 140, 140, 14);
 
         lbl_FileSize.setText("File Size");
+        ConfigureTestRead.add(lbl_FileSize);
+        lbl_FileSize.setBounds(50, 190, 140, 14);
 
         lbl_BlockSize.setText("Block Size");
+        ConfigureTestRead.add(lbl_BlockSize);
+        lbl_BlockSize.setBounds(50, 240, 140, 14);
 
         cb_NumberOfTests.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5" }));
-        cb_NumberOfTests.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_NumberOfTestsActionPerformed(evt);
-            }
-        });
+        ConfigureTestRead.add(cb_NumberOfTests);
+        cb_NumberOfTests.setBounds(190, 140, 100, 20);
 
-        cb_FileSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "64 KB", "512 bytes", "1 KB", "2 KB", "4 KB", "8 KB", "16 KB", "32 KB", "128 KB", "256 KB", "512 KB", "1 MB", "2 MB", "4 MB", "8 MB", "16 MB", "32 MB" }));
-        cb_FileSize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_FileSizeActionPerformed(evt);
-            }
-        });
+        cb_blockSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "512 bytes", "1 KB", "2 KB", "4 KB", "8 KB", "16 KB", "32 KB", "64 KB", "128 KB", "256 KB", "512 KB", "1 MB", "2 MB", "4 MB", "8 MB", "16 MB", "32 MB" }));
+        cb_blockSize.setSelectedIndex(7);
+        ConfigureTestRead.add(cb_blockSize);
+        cb_blockSize.setBounds(190, 240, 100, 20);
 
-        cb_BlockSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 GB", "3 GB", "5 GB" }));
-        cb_BlockSize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_BlockSizeActionPerformed(evt);
-            }
-        });
+        cb_fileSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 GB", "3 GB", "5 GB" }));
+        ConfigureTestRead.add(cb_fileSize);
+        cb_fileSize.setBounds(190, 190, 100, 20);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -335,84 +407,54 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        javax.swing.GroupLayout ConfigureTestLayout = new javax.swing.GroupLayout(ConfigureTest);
-        ConfigureTest.setLayout(ConfigureTestLayout);
-        ConfigureTestLayout.setHorizontalGroup(
-            ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ConfigureTestLayout.createSequentialGroup()
-                .addGap(138, 138, 138)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(ConfigureTestLayout.createSequentialGroup()
-                        .addComponent(lbl_RandomAccess)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rb_RandomAccess))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ConfigureTestLayout.createSequentialGroup()
-                        .addComponent(lbl_NumberOfTests)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cb_NumberOfTests, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ConfigureTestLayout.createSequentialGroup()
-                        .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(ConfigureTestLayout.createSequentialGroup()
-                                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lbl_FileSize, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbl_BlockSize, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(95, 95, 95))
-                            .addComponent(lbl_Sequential, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ConfigureTestLayout.createSequentialGroup()
-                                .addGap(122, 122, 122)
-                                .addComponent(cb_FileSize, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(cb_BlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rb_Sequential))))
-                .addContainerGap(143, Short.MAX_VALUE))
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        ConfigureTestLayout.setVerticalGroup(
-            ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ConfigureTestLayout.createSequentialGroup()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rb_Sequential)
-                    .addComponent(lbl_Sequential))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbl_RandomAccess)
-                    .addComponent(rb_RandomAccess))
-                .addGap(18, 18, 18)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_NumberOfTests)
-                    .addComponent(cb_NumberOfTests, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_FileSize)
-                    .addComponent(cb_BlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(ConfigureTestLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cb_FileSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_BlockSize))
-                .addGap(84, 84, 84))
-        );
+        ConfigureTestRead.add(jPanel3);
+        jPanel3.setBounds(0, 0, 644, 51);
 
-        jPanel2.add(ConfigureTest, "card2");
+        button_defaultConfiguration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/button_default_config.png"))); // NOI18N
+        button_defaultConfiguration.setText("jLabel2");
+        button_defaultConfiguration.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                button_defaultConfigurationMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_defaultConfigurationMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button_defaultConfigurationMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                button_defaultConfigurationMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                button_defaultConfigurationMouseReleased(evt);
+            }
+        });
+        ConfigureTestRead.add(button_defaultConfiguration);
+        button_defaultConfiguration.setBounds(50, 320, 180, 60);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/separator_line.png"))); // NOI18N
+        ConfigureTestRead.add(jLabel2);
+        jLabel2.setBounds(350, 70, 10, 270);
+
+        jPanel2.add(ConfigureTestRead, "card2");
+
+        RunConfiguration.setLayout(null);
 
         jt_random.setText("jTextField2");
-        jt_random.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jt_randomActionPerformed(evt);
-            }
-        });
+        RunConfiguration.add(jt_random);
+        jt_random.setBounds(560, 250, 59, 20);
 
         jTextField3.setText("Random/ Seq");
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
-            }
-        });
+        RunConfiguration.add(jTextField3);
+        jTextField3.setBounds(440, 250, 101, 20);
 
         jLabel3.setText("Nr of Tests");
+        RunConfiguration.add(jLabel3);
+        jLabel3.setBounds(440, 280, 101, 14);
 
         jt_nr.setText("jTextField4");
+        RunConfiguration.add(jt_nr);
+        jt_nr.setBounds(560, 280, 59, 20);
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -437,7 +479,7 @@ public class Home extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(602, Short.MAX_VALUE)
+                .addContainerGap(529, Short.MAX_VALUE)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -448,69 +490,164 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jButton1.setText("jButton1");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
-            }
-        });
+        RunConfiguration.add(jPanel4);
+        jPanel4.setBounds(79, 0, 571, 51);
 
         testtext.setText("jTextField2");
-        testtext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                testtextActionPerformed(evt);
+        RunConfiguration.add(testtext);
+        testtext.setBounds(70, 250, 360, 68);
+
+        button_start.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/start_button_default.png"))); // NOI18N
+        button_start.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                button_startMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_startMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button_startMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                button_startMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                button_startMouseReleased(evt);
             }
         });
+        RunConfiguration.add(button_start);
+        button_start.setBounds(65, 319, 177, 52);
 
-        javax.swing.GroupLayout RunConfigurationLayout = new javax.swing.GroupLayout(RunConfiguration);
-        RunConfiguration.setLayout(RunConfigurationLayout);
-        RunConfigurationLayout.setHorizontalGroup(
-            RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RunConfigurationLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RunConfigurationLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jt_nr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jt_random, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField3)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(118, 118, 118))
-                    .addGroup(RunConfigurationLayout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(29, 29, 29)
-                        .addComponent(testtext, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(29, 29, 29))
-        );
-        RunConfigurationLayout.setVerticalGroup(
-            RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RunConfigurationLayout.createSequentialGroup()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jt_random, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(jt_nr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(RunConfigurationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(testtext, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(67, Short.MAX_VALUE))
-        );
+        button_stop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/stop_button_default.png"))); // NOI18N
+        button_stop.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_stopMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button_stopMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                button_stopMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                button_stopMouseReleased(evt);
+            }
+        });
+        RunConfiguration.add(button_stop);
+        button_stop.setBounds(414, 319, 177, 52);
+
+        lbl_transferRate.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_transferRate.setText("Transfer Rate");
+        RunConfiguration.add(lbl_transferRate);
+        lbl_transferRate.setBounds(270, 60, 110, 22);
+
+        lbl_readTR.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lbl_readTR.setText("Read");
+        RunConfiguration.add(lbl_readTR);
+        lbl_readTR.setBounds(180, 110, 40, 14);
+
+        tf_minRead.setEditable(false);
+        tf_minRead.setBackground(new java.awt.Color(214, 217, 223));
+        tf_minRead.setText("0");
+        tf_minRead.setToolTipText("");
+        tf_minRead.setBorder(null);
+        RunConfiguration.add(tf_minRead);
+        tf_minRead.setBounds(180, 150, 40, 20);
+
+        tf_avgRead.setEditable(false);
+        tf_avgRead.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgRead.setText("0");
+        tf_avgRead.setBorder(null);
+        RunConfiguration.add(tf_avgRead);
+        tf_avgRead.setBounds(180, 180, 40, 20);
+
+        tf_maxRead.setEditable(false);
+        tf_maxRead.setBackground(new java.awt.Color(214, 217, 223));
+        tf_maxRead.setText("0");
+        tf_maxRead.setBorder(null);
+        RunConfiguration.add(tf_maxRead);
+        tf_maxRead.setBounds(180, 210, 40, 20);
+
+        lbl_writeTR.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lbl_writeTR.setText("Write");
+        RunConfiguration.add(lbl_writeTR);
+        lbl_writeTR.setBounds(420, 110, 33, 17);
+
+        tf_minWrite.setEditable(false);
+        tf_minWrite.setBackground(new java.awt.Color(214, 217, 223));
+        tf_minWrite.setText("0");
+        tf_minWrite.setBorder(null);
+        RunConfiguration.add(tf_minWrite);
+        tf_minWrite.setBounds(420, 150, 40, 20);
+
+        tf_avgWrite.setEditable(false);
+        tf_avgWrite.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite.setText("MB/sec");
+        tf_avgWrite.setBorder(null);
+        RunConfiguration.add(tf_avgWrite);
+        tf_avgWrite.setBounds(220, 210, 59, 20);
+
+        tf_maxWrite.setEditable(false);
+        tf_maxWrite.setBackground(new java.awt.Color(214, 217, 223));
+        tf_maxWrite.setText("0");
+        tf_maxWrite.setBorder(null);
+        RunConfiguration.add(tf_maxWrite);
+        tf_maxWrite.setBounds(420, 180, 40, 20);
+
+        lbl_min.setText("Minimum");
+        RunConfiguration.add(lbl_min);
+        lbl_min.setBounds(70, 150, 60, 14);
+
+        lbl_avg.setText("Average");
+        RunConfiguration.add(lbl_avg);
+        lbl_avg.setBounds(70, 180, 60, 14);
+
+        lbl_max.setText("Maximum");
+        RunConfiguration.add(lbl_max);
+        lbl_max.setBounds(70, 210, 60, 14);
+
+        tf_avgWrite1.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite1.setText("0");
+        tf_avgWrite1.setBorder(null);
+        RunConfiguration.add(tf_avgWrite1);
+        tf_avgWrite1.setBounds(420, 210, 40, 20);
+
+        tf_avgWrite2.setEditable(false);
+        tf_avgWrite2.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite2.setText("MB/sec");
+        tf_avgWrite2.setBorder(null);
+        RunConfiguration.add(tf_avgWrite2);
+        tf_avgWrite2.setBounds(220, 150, 59, 20);
+
+        tf_avgWrite3.setEditable(false);
+        tf_avgWrite3.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite3.setText("MB/sec");
+        tf_avgWrite3.setBorder(null);
+        RunConfiguration.add(tf_avgWrite3);
+        tf_avgWrite3.setBounds(220, 180, 59, 20);
+
+        tf_avgWrite4.setEditable(false);
+        tf_avgWrite4.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite4.setText("MB/sec");
+        tf_avgWrite4.setBorder(null);
+        RunConfiguration.add(tf_avgWrite4);
+        tf_avgWrite4.setBounds(460, 210, 59, 20);
+
+        tf_avgWrite5.setEditable(false);
+        tf_avgWrite5.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite5.setText("MB/sec");
+        tf_avgWrite5.setBorder(null);
+        RunConfiguration.add(tf_avgWrite5);
+        tf_avgWrite5.setBounds(460, 150, 59, 20);
+
+        tf_avgWrite6.setEditable(false);
+        tf_avgWrite6.setBackground(new java.awt.Color(214, 217, 223));
+        tf_avgWrite6.setText("MB/sec");
+        tf_avgWrite6.setBorder(null);
+        RunConfiguration.add(tf_avgWrite6);
+        tf_avgWrite6.setBounds(460, 180, 59, 20);
 
         jPanel2.add(RunConfiguration, "card2");
-
-        UploadScore.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                UploadScoreMouseClicked(evt);
-            }
-        });
 
         lbl_information.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_information.setText("Information");
@@ -535,16 +672,6 @@ public class Home extends javax.swing.JFrame {
                 tf_nameMouseClicked(evt);
             }
         });
-        tf_name.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tf_nameActionPerformed(evt);
-            }
-        });
-        tf_name.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tf_nameKeyPressed(evt);
-            }
-        });
 
         lbl_laptopmodel.setText("Laptop Model");
 
@@ -566,11 +693,6 @@ public class Home extends javax.swing.JFrame {
                 tf_laptopmodelMouseClicked(evt);
             }
         });
-        tf_laptopmodel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tf_laptopmodelActionPerformed(evt);
-            }
-        });
 
         lbl_selectDrive.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_selectDrive.setText("Select Drive");
@@ -579,9 +701,12 @@ public class Home extends javax.swing.JFrame {
         lbl_ssd.setText("SSD");
         lbl_ssd.setToolTipText("Solid State Drive");
 
-        rb_ssd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rb_ssdActionPerformed(evt);
+        rb_ssd.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                rb_ssdFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                rb_ssdFocusLost(evt);
             }
         });
 
@@ -589,23 +714,37 @@ public class Home extends javax.swing.JFrame {
         lbl_hdd.setText("HDD");
         lbl_hdd.setToolTipText("Hard Disk Drive");
 
-        rd_hdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rd_hddActionPerformed(evt);
+        rd_hdd.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                rd_hddFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                rd_hddFocusLost(evt);
             }
         });
 
-        lbl_selectDrive1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        lbl_selectDrive1.setText("Score Result");
+        lbl_scoreResult.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_scoreResult.setText("Score Result");
 
-        jTextField1.setBackground(new java.awt.Color(214, 217, 223));
-        jTextField1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setText("score");
-        jTextField1.setBorder(null);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+        tf_score.setBackground(new java.awt.Color(214, 217, 223));
+        tf_score.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tf_score.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tf_score.setText("score");
+        tf_score.setBorder(null);
+        tf_score.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tf_scoreFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tf_scoreFocusLost(evt);
+            }
+        });
+        tf_score.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tf_scoreMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tf_scoreMouseExited(evt);
             }
         });
 
@@ -613,6 +752,9 @@ public class Home extends javax.swing.JFrame {
         lbl_BUpload.setText("jLabel1");
         lbl_BUpload.setPreferredSize(new java.awt.Dimension(177, 52));
         lbl_BUpload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_BUploadMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbl_BUploadMouseEntered(evt);
             }
@@ -657,7 +799,7 @@ public class Home extends javax.swing.JFrame {
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGap(0, 11, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -686,12 +828,12 @@ public class Home extends javax.swing.JFrame {
                         .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(rd_hdd)
                             .addComponent(rb_ssd))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 64, Short.MAX_VALUE))
                     .addComponent(lbl_selectDrive, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36)
                 .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbl_selectDrive1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(lbl_scoreResult, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tf_score))
                 .addGap(54, 54, 54))
             .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -716,12 +858,12 @@ public class Home extends javax.swing.JFrame {
                                 .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(lbl_information)
                                     .addComponent(lbl_selectDrive)
-                                    .addComponent(lbl_selectDrive1))
+                                    .addComponent(lbl_scoreResult))
                                 .addGap(34, 34, 34)
                                 .addComponent(lbl_name)
                                 .addGap(12, 12, 12))
                             .addGroup(UploadScoreLayout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(tf_score, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(5, 5, 5)))
                         .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -732,9 +874,9 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(tf_laptopmodel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(s_laptopmodel, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                 .addComponent(lbl_BUpload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
 
         jPanel2.add(UploadScore, "card2");
@@ -762,7 +904,7 @@ public class Home extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(602, Short.MAX_VALUE)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -806,7 +948,12 @@ public class Home extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Method that displays Run Configuration panel (hides others)
+     * @param evt 
+     */
     private void lbl_RunTestMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_RunTestMouseClicked
+        // Hovering & Selected Button
         isRunTestClicked = true;
         isConfigureTestClicked = false;
         isUploadScoreClicked = false;
@@ -817,7 +964,7 @@ public class Home extends javax.swing.JFrame {
         resetLblColor(lbl_Help);
         
         // Switch between JPanels
-        ConfigureTest.setVisible(false);
+        ConfigureTestRead.setVisible(false);
         RunConfiguration.setVisible(true);
         UploadScore.setVisible(false);
         Help.setVisible(false);
@@ -829,7 +976,12 @@ public class Home extends javax.swing.JFrame {
 
     }//GEN-LAST:event_lbl_RunTestMouseClicked
 
+    /**
+     * Method that displays Configure Test panel (hides others)
+     * @param evt 
+     */
     private void lbl_ConfigureTestMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_ConfigureTestMouseClicked
+       // Hovering & Selected Button
         isRunTestClicked = false;
         isConfigureTestClicked = true;
         isUploadScoreClicked = false;
@@ -840,30 +992,40 @@ public class Home extends javax.swing.JFrame {
         resetLblColor(lbl_Help);
         
         // Switch between JPanels
-        ConfigureTest.setVisible(true);
+        ConfigureTestRead.setVisible(true);
         RunConfiguration.setVisible(false);
         UploadScore.setVisible(false);
         Help.setVisible(false);
     }//GEN-LAST:event_lbl_ConfigureTestMouseClicked
 
+    /**
+     * Method that displays Upload Score panel (hides others)
+     * @param evt 
+     */
     private void lbl_UploadScoreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_UploadScoreMouseClicked
-       isRunTestClicked = false;
-       isConfigureTestClicked = false;
+        // Hovering & Selected Button
+        isRunTestClicked = false;
+        isConfigureTestClicked = false;
         isUploadScoreClicked = true;
         isHelpClicked = false;
-       setLblColor(lbl_UploadScore);
-       resetLblColor(lbl_RunTest);
-       resetLblColor(lbl_ConfigureTest);
-       resetLblColor(lbl_Help);
+        setLblColor(lbl_UploadScore);
+        resetLblColor(lbl_RunTest);
+        resetLblColor(lbl_ConfigureTest);
+        resetLblColor(lbl_Help);
        
         // Switch between JPanels
-        ConfigureTest.setVisible(false);
+        ConfigureTestRead.setVisible(false);
         RunConfiguration.setVisible(false);
         UploadScore.setVisible(true);
         Help.setVisible(false);
     }//GEN-LAST:event_lbl_UploadScoreMouseClicked
 
+     /**
+     * Method that displays Help panel (hides others)
+     * @param evt 
+     */
     private void lbl_HelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_HelpMouseClicked
+        // Hovering & Selected Button
         isRunTestClicked = false;
         isConfigureTestClicked = false;
         isUploadScoreClicked = false;
@@ -874,12 +1036,13 @@ public class Home extends javax.swing.JFrame {
         resetLblColor(lbl_UploadScore);
         
         // Switch between JPanels
-        ConfigureTest.setVisible(false);
+        ConfigureTestRead.setVisible(false);
         RunConfiguration.setVisible(false);
         UploadScore.setVisible(false);
         Help.setVisible(true);
     }//GEN-LAST:event_lbl_HelpMouseClicked
 
+    // Next 8 methods are for Hovering Effect
     private void lbl_RunTestMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_RunTestMouseEntered
         if(isRunTestClicked == false){
             setLblHoverColor(lbl_RunTest);
@@ -887,7 +1050,6 @@ public class Home extends javax.swing.JFrame {
            // resetLblColor(lbl_UploadScore);
           //  resetLblColor(lbl_Help);
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_RunTestMouseEntered
 
     private void lbl_ConfigureTestMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_ConfigureTestMouseEntered
@@ -897,7 +1059,6 @@ public class Home extends javax.swing.JFrame {
           //  resetLblColor(lbl_Help);
             setLblHoverColor(lbl_ConfigureTest);
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_ConfigureTestMouseEntered
 
     private void lbl_UploadScoreMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_UploadScoreMouseEntered
@@ -907,7 +1068,6 @@ public class Home extends javax.swing.JFrame {
            // resetLblColor(lbl_Help);
             setLblHoverColor(lbl_UploadScore);
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_UploadScoreMouseEntered
 
     private void lbl_HelpMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_HelpMouseEntered
@@ -917,7 +1077,6 @@ public class Home extends javax.swing.JFrame {
           //  resetLblColor(lbl_UploadScore);
             setLblHoverColor(lbl_Help);
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_HelpMouseEntered
 
     private void lbl_RunTestMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_RunTestMouseExited
@@ -927,7 +1086,6 @@ public class Home extends javax.swing.JFrame {
             resetLblColor(lbl_UploadScore);
         if(isHelpClicked == false)
             resetLblColor(lbl_Help);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_RunTestMouseExited
 
     private void lbl_ConfigureTestMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_ConfigureTestMouseExited
@@ -937,7 +1095,6 @@ public class Home extends javax.swing.JFrame {
             resetLblColor(lbl_UploadScore);
         if(isHelpClicked == false)
             resetLblColor(lbl_Help);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_ConfigureTestMouseExited
 
     private void lbl_UploadScoreMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_UploadScoreMouseExited
@@ -947,7 +1104,6 @@ public class Home extends javax.swing.JFrame {
             resetLblColor(lbl_ConfigureTest);
         if(isHelpClicked == false)
             resetLblColor(lbl_Help);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_UploadScoreMouseExited
 
     private void lbl_HelpMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_HelpMouseExited
@@ -957,31 +1113,34 @@ public class Home extends javax.swing.JFrame {
             resetLblColor(lbl_ConfigureTest);
         if(isUploadScoreClicked == false)
             resetLblColor(lbl_UploadScore);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_HelpMouseExited
 
+    // Needs updating
     private void jPanel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseEntered
         if(isRunTestClicked == true){
             resetLblColor(lbl_ConfigureTest);
             resetLblColor(lbl_UploadScore);
             resetLblColor(lbl_Help);
+            setLblColor(lbl_RunTest);
         }
         if(isConfigureTestClicked == true){
             resetLblColor(lbl_RunTest);
             resetLblColor(lbl_UploadScore);
             resetLblColor(lbl_Help);
+            setLblColor(lbl_ConfigureTest);
         }
         if(isUploadScoreClicked == true){
             resetLblColor(lbl_RunTest);
             resetLblColor(lbl_ConfigureTest);
             resetLblColor(lbl_Help);
+            setLblColor(lbl_UploadScore);
         }
         if(isHelpClicked == true){
             resetLblColor(lbl_RunTest);
             resetLblColor(lbl_ConfigureTest);
             resetLblColor(lbl_UploadScore);
+            setLblColor(lbl_Help);
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_jPanel1MouseEntered
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
@@ -1005,198 +1164,129 @@ public class Home extends javax.swing.JFrame {
             resetLblColor(lbl_RunTest);
             resetLblColor(lbl_ConfigureTest);
             resetLblColor(lbl_UploadScore);
-        }// TODO add your handling code here:
+        }
     }//GEN-LAST:event_formMouseEntered
 
+    /**
+     * Method that gets the current position of mouse on screen
+     * @param evt 
+     */
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
         xx = evt.getX();
         xy = evt.getY();
-        // TODO add your handling code here:
     }//GEN-LAST:event_formMousePressed
 
+    /**
+     * Ability to freely drag the app around
+     * @param evt 
+     */
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
         this.setLocation(x-xx, y-xy);
-        // TODO add your handling code here:
     }//GEN-LAST:event_formMouseDragged
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        isRunTestClicked = false;
-        isConfigureTestClicked = true;
-        isUploadScoreClicked = false;
-        isHelpClicked = false;
-        setLblColor(lbl_ConfigureTest);   
-        resetLblColor(lbl_RunTest);
-        resetLblColor(lbl_UploadScore);
-        resetLblColor(lbl_Help);
-        // TODO add your handling code here:
+        if(isRunTestClicked == true){
+            resetLblColor(lbl_ConfigureTest);
+            resetLblColor(lbl_UploadScore);
+            resetLblColor(lbl_Help);
+            setLblColor(lbl_RunTest);
+        }
+        if(isConfigureTestClicked == true){
+            resetLblColor(lbl_RunTest);
+            resetLblColor(lbl_UploadScore);
+            resetLblColor(lbl_Help);
+            setLblColor(lbl_ConfigureTest);
+        }
+        if(isUploadScoreClicked == true){
+            resetLblColor(lbl_RunTest);
+            resetLblColor(lbl_ConfigureTest);
+            resetLblColor(lbl_Help);
+            setLblColor(lbl_UploadScore);
+        }
+        if(isHelpClicked == true){
+            resetLblColor(lbl_RunTest);
+            resetLblColor(lbl_ConfigureTest);
+            resetLblColor(lbl_UploadScore);
+            setLblColor(lbl_Help);
+        }
     }//GEN-LAST:event_formWindowActivated
-
-    private void cb_BlockSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_BlockSizeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cb_BlockSizeActionPerformed
-
-    private void cb_FileSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_FileSizeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cb_FileSizeActionPerformed
-
-    private void cb_NumberOfTestsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_NumberOfTestsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cb_NumberOfTestsActionPerformed
-
-    private void rb_RandomAccessMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rb_RandomAccessMouseClicked
-        if(rb_RandomAccess.isSelected()){
-           rb_Sequential.setSelected(false);
-           ReadWriteString = "0";
-        }
-        else{//switch to Sequential
-            rb_Sequential.setSelected(true);
-            rb_RandomAccess.setSelected(false);
-            ReadWriteString = "1";
-        }
-            //rb_RandomAccess.setSelected(true);
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rb_RandomAccessMouseClicked
-
-    private void rb_SequentialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rb_SequentialMouseClicked
-        if(rb_Sequential.isSelected()){
-            rb_RandomAccess.setSelected(false);
-            ReadWriteString = "1";
-        }
-        else{//switch to RandomAccess 
-            rb_RandomAccess.setSelected(true);
-            rb_Sequential.setSelected(false);
-            ReadWriteString = "0";
-        }
-            //rb_Sequential.setSelected(true);
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rb_SequentialMouseClicked
-
-    private void tf_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_nameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tf_nameActionPerformed
-
-    private void rd_hddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_hddActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rd_hddActionPerformed
-
-    private void rb_ssdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_ssdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rb_ssdActionPerformed
-
-    private void tf_laptopmodelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_laptopmodelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tf_laptopmodelActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void tf_laptopmodelFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_laptopmodelFocusGained
         lbl_laptopmodel.setForeground(new Color(9, 65, 109)); //focused -> blue
         lbl_information.setForeground(new Color(24, 186, 129)); //focused -> green
-        // TODO add your handling code here:
     }//GEN-LAST:event_tf_laptopmodelFocusGained
 
     private void tf_laptopmodelFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_laptopmodelFocusLost
         lbl_laptopmodel.setForeground(new Color(0, 0, 0)); //unfocused -> black
         lbl_information.setForeground(new Color(0, 0, 0)); //unfocused -> black
-        // TODO add your handling code here:
     }//GEN-LAST:event_tf_laptopmodelFocusLost
 
     private void lbl_BUploadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMouseEntered
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/button_hoverpsd.png"));
         lbl_BUpload.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_BUploadMouseEntered
 
     private void lbl_BUploadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMouseExited
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/button_default.png"));
         lbl_BUpload.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_BUploadMouseExited
 
     private void lbl_BUploadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMousePressed
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/button_pressed.png"));
         lbl_BUpload.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_BUploadMousePressed
 
     private void lbl_BUploadMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMouseReleased
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/button_hoverpsd.png"));
         lbl_BUpload.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_lbl_BUploadMouseReleased
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
-
-    private void jt_randomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jt_randomActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jt_randomActionPerformed
-
-    private void rb_RandomAccessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_RandomAccessActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rb_RandomAccessActionPerformed
-
-    private void rb_SequentialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_SequentialActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rb_SequentialActionPerformed
 
     private void jLabel4MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseReleased
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel4.setIcon(IB);
         System.exit(0);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel4MouseReleased
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hovered.png"));
         jLabel4.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/normal.png"));
         jLabel4.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel4MouseExited
 
     private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel4.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel4MouseEntered
                                       
     private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel5.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel5MouseEntered
 
     private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/normal.png"));
         jLabel5.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel5MouseExited
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hovered.png"));
-        jLabel5.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel5MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseReleased
@@ -1210,21 +1300,18 @@ public class Home extends javax.swing.JFrame {
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel6.setIcon(IB);
-        // TODO add your handling code here:// TODO add your handling code here:
     }//GEN-LAST:event_jLabel6MouseEntered
 
     private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/normal.png"));
         jLabel6.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel6MouseExited
 
     private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hovered.png"));
         jLabel6.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel6MousePressed
 
     private void jLabel6MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseReleased
@@ -1232,28 +1319,24 @@ public class Home extends javax.swing.JFrame {
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel6.setIcon(IB);
         System.exit(0);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel6MouseReleased
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel7.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/normal.png"));
         jLabel7.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MouseExited
 
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
         ImageIcon IB;
         IB = new ImageIcon(getClass().getResource("/images/hovered.png"));
         jLabel7.setIcon(IB);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MousePressed
 
     private void jLabel7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseReleased
@@ -1261,23 +1344,7 @@ public class Home extends javax.swing.JFrame {
         IB = new ImageIcon(getClass().getResource("/images/hover.png"));
         jLabel7.setIcon(IB);
         System.exit(0);
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MouseReleased
-
-    private void testtextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testtextActionPerformed
-      
-    }//GEN-LAST:event_testtextActionPerformed
-
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-    String a, b, c, d;
-                a = getReadWriteMethod();
-                b = getNumberOfTests();
-                c = getFileSize();
-                d = getBlockSize();// TODO add your handling code here:
-                String res = "ReadWriteMethod " + a + "--NrTests " + b + "--File Size " + c + "--Block Size "+ d;
-                testtext.setText(res);
-// TODO add your handling code here:
-    }//GEN-LAST:event_jButton1MouseClicked
 
     private void tf_nameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_nameMouseClicked
         if(isDefaultTextName == true){
@@ -1287,7 +1354,7 @@ public class Home extends javax.swing.JFrame {
             tf_name.setForeground(Color.BLACK);
             isDefaultTextName = false;
         }
-        // TODO add your handling code here:
+        tf_name.getCaret().setBlinkRate(750); // stop blinking once user leaves textfield 
     }//GEN-LAST:event_tf_nameMouseClicked
 
     private void tf_laptopmodelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_laptopmodelMouseClicked
@@ -1298,36 +1365,246 @@ public class Home extends javax.swing.JFrame {
             tf_laptopmodel.setForeground(Color.BLACK);
             isDefaultTextLaptopModel = false;
         }
-        // TODO add your handling code here:
+        tf_laptopmodel.getCaret().setBlinkRate(750); //stop blinking once user leaves textfield
     }//GEN-LAST:event_tf_laptopmodelMouseClicked
 
     private void tf_nameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_nameFocusGained
         lbl_name.setForeground(new Color(9, 65, 109)); //focused -> blue
         lbl_information.setForeground(new Color(24, 186, 129)); //focused -> green
-        // TODO add your handling code here:
     }//GEN-LAST:event_tf_nameFocusGained
 
     private void tf_nameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_nameFocusLost
         lbl_name.setForeground(new Color(0, 0, 0)); //unfocused -> black
         lbl_information.setForeground(new Color(0, 0, 0)); //unfocused -> black
-        // TODO add your handling code here:
     }//GEN-LAST:event_tf_nameFocusLost
 
-    private void UploadScoreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UploadScoreMouseClicked
-        lbl_name.setForeground(new Color(0, 0, 0)); //unfocused -> black
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        //Design for Upload Score Page
+        lbl_name.setForeground(new Color(0, 0, 0)); // unfocused -> black
         lbl_laptopmodel.setForeground(new Color(0, 0, 0));
-        lbl_information.setForeground(new Color(0, 0, 0)); //unfocused -> black
-        // TODO add your handling code here:
-    }//GEN-LAST:event_UploadScoreMouseClicked
-
-    private void tf_nameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tf_nameKeyPressed
+        lbl_information.setForeground(new Color(0, 0, 0)); // unfocused -> black
+        lbl_selectDrive.setForeground(new Color(0, 0 ,0)); // unfocused -> black
         
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tf_nameKeyPressed
+        //Other
+        
+    }//GEN-LAST:event_formMouseClicked
+
+    private void button_startMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_startMouseEntered
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/start_button_hover.png"));
+        button_start.setIcon(IB);
+    }//GEN-LAST:event_button_startMouseEntered
+
+    private void button_startMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_startMouseExited
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/start_button_default.png"));
+        button_start.setIcon(IB);
+    }//GEN-LAST:event_button_startMouseExited
+
+    private void button_startMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_startMousePressed
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/start_button_pressed.png"));
+        button_start.setIcon(IB);
+    }//GEN-LAST:event_button_startMousePressed
+
+    private void button_startMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_startMouseReleased
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/start_button_hover.png"));
+        button_start.setIcon(IB);
+    }//GEN-LAST:event_button_startMouseReleased
+
+    private void button_stopMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_stopMouseEntered
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/stop_button_hover.png"));
+        button_stop.setIcon(IB);
+    }//GEN-LAST:event_button_stopMouseEntered
+
+    private void button_stopMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_stopMouseExited
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/stop_button_default.png"));
+        button_stop.setIcon(IB);
+    }//GEN-LAST:event_button_stopMouseExited
+
+    private void button_stopMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_stopMousePressed
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/stop_button_pressed.png"));
+        button_stop.setIcon(IB);
+    }//GEN-LAST:event_button_stopMousePressed
+
+    private void button_stopMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_stopMouseReleased
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/stop_button_hover.png"));
+        button_stop.setIcon(IB);
+    }//GEN-LAST:event_button_stopMouseReleased
+
+    private void rb_ssdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rb_ssdFocusGained
+        lbl_selectDrive.setForeground(new Color(24, 186, 129)); //focused -> green
+    }//GEN-LAST:event_rb_ssdFocusGained
+
+    private void rb_ssdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rb_ssdFocusLost
+        lbl_selectDrive.setForeground(new Color(0, 0, 0)); //unfocused -> black
+    }//GEN-LAST:event_rb_ssdFocusLost
+
+    private void rd_hddFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rd_hddFocusGained
+        lbl_selectDrive.setForeground(new Color(24, 186, 129)); //focused -> green
+    }//GEN-LAST:event_rd_hddFocusGained
+
+    private void rd_hddFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_rd_hddFocusLost
+       lbl_selectDrive.setForeground(new Color(0, 0, 0)); //unfocused -> black
+    }//GEN-LAST:event_rd_hddFocusLost
+
+    private void tf_scoreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_scoreFocusGained
+        lbl_scoreResult.setForeground(new Color(24, 186, 129));
+    }//GEN-LAST:event_tf_scoreFocusGained
+
+    private void tf_scoreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tf_scoreFocusLost
+       lbl_scoreResult.setForeground(new Color(0, 0 ,0)); 
+    }//GEN-LAST:event_tf_scoreFocusLost
+
+    private void tf_scoreMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_scoreMouseEntered
+        lbl_scoreResult.setForeground(new Color(24, 186, 129));
+    }//GEN-LAST:event_tf_scoreMouseEntered
+
+    private void tf_scoreMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tf_scoreMouseExited
+        lbl_scoreResult.setForeground(new Color(0, 0 ,0));
+    }//GEN-LAST:event_tf_scoreMouseExited
+
+    private void button_defaultConfigurationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMouseEntered
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/button_hover_config.png"));
+        button_defaultConfiguration.setIcon(IB);
+    }//GEN-LAST:event_button_defaultConfigurationMouseEntered
+
+    private void button_defaultConfigurationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMouseExited
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/button_default_config.png"));
+        button_defaultConfiguration.setIcon(IB);
+    }//GEN-LAST:event_button_defaultConfigurationMouseExited
+
+    private void button_defaultConfigurationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMousePressed
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/button_pressed_config.png"));
+        button_defaultConfiguration.setIcon(IB);
+    }//GEN-LAST:event_button_defaultConfigurationMousePressed
+
+    private void button_defaultConfigurationMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMouseReleased
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/button_hover_config.png"));
+        button_defaultConfiguration.setIcon(IB);
+    }//GEN-LAST:event_button_defaultConfigurationMouseReleased
+
+    private void button_defaultConfigurationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMouseClicked
+        if(rb_RandomAccess.isSelected())
+            rb_Sequential.setSelected(true);
+        if(rb_write.isSelected())
+            rb_read.setSelected(true);
+        cb_NumberOfTests.setSelectedIndex(0);
+        cb_fileSize.setSelectedIndex(0);
+        cb_blockSize.setSelectedIndex(0);
+    }//GEN-LAST:event_button_defaultConfigurationMouseClicked
+
+    /**
+    * Method that start the benchmark with given parameters set by user (or default)
+    * @param evt 
+    */
+    private void button_startMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_startMouseClicked
+        int access, readwrite, nrTests, fileSize, blockSize;
+        access = Integer.parseInt(getReadWriteMethod());
+        readwrite = Integer.parseInt(getReadWriteTest());
+        nrTests = Integer.parseInt(getNumberOfTests());
+        fileSize = Integer.parseInt((getFileSize()).split(" ")[0]);
+        blockSize = Integer.parseInt((getBlockSize().split(" ")[0]));
+        
+        if(access == 1){ //Sequential
+            if(rb_read.isSelected() == true){ //read test - S E Q
+                ReadSpeed bench = new ReadSpeed(blockSize * 1024, "seq", nrTests, fileSize);
+                //Thread runThread = new Thread();
+               // runThread.start();
+                bench.read();
+                
+                ranTest = true;
+                tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
+                tf_avgRead.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
+                System.out.println(bench.getAvgScore());
+            }else if(rb_write.isSelected() == true){ //write test - S E Q
+                WriteSpeed bench = new WriteSpeed(blockSize * 1024, "seq", nrTests, fileSize);
+                bench.write();
+                
+                ranTest = true;
+                tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
+                tf_avgWrite.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
+                System.out.println(bench.getAvgScore());
+            }
+        }/*
+        else if(access == 0){ //Random
+            if(rb_read.isSelected() == true){ //read test - R A N D
+                ReadSpeed bench = new ReadSpeed(blockSize * 1024, "rand", nrTests, fileSize);
+                bench.read();
+                
+                ranTest = true;
+                tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
+                tf_avgRead.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
+                System.out.println(bench.getAvgScore());
+            }else if(rb_write.isSelected() == true){ //read test - R A N D
+                WriteSpeed bench = new WriteSpeed(blockSize * 1024, "rand", nrTests, fileSize);
+                bench.write();
+                
+                ranTest = true;
+                tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
+                tf_avgWrite.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
+                System.out.println(bench.getAvgScore());
+            }
+        }*/
+        String res = "ReadWriteMethod " + access + "...readwrite " + readwrite + "... NrTests " + nrTests + "... File Size " + fileSize + "... Block Size "+ blockSize;
+        testtext.setText(res);
+    }//GEN-LAST:event_button_startMouseClicked
+
+    private void lbl_BUploadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMouseClicked
+        String userName, driveType, laptopModel;
+        double score;
+        
+        // Get user input
+        userName = getUserName();
+        driveType = getDriveType();
+        laptopModel = getLaptopModel();
+           
+        // Check user input
+        if(ranTest == false){
+             JOptionPane.showMessageDialog(null, "Please run a test first", null, JOptionPane.WARNING_MESSAGE);
+        }else if(userName.equals("0") && laptopModel.equals("0") && driveType.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please fill the empty spaces and select the\ntype of you computer drive", null, JOptionPane.WARNING_MESSAGE);
+        }else if(userName.equals("0") && laptopModel.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please fill the empty spaces", null, JOptionPane.WARNING_MESSAGE);
+        }else if(userName.equals("0") && driveType.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please enter a username and select the\ntype of you computer drive", null, JOptionPane.WARNING_MESSAGE);
+        }else if(driveType.equals("0") && laptopModel.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please enter a laptop model\n(write Desktop if you do not own a laptop) and select the\ntype of you computer drive", null, JOptionPane.WARNING_MESSAGE);
+        }else if(userName.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please enter a username", null, JOptionPane.WARNING_MESSAGE);
+        }else if(laptopModel.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please enter a laptop model\n(write Desktop if you do not own a laptop)", null, JOptionPane.WARNING_MESSAGE);
+        }else if(driveType.equals("0")){
+            JOptionPane.showMessageDialog(null, "Please select the type of your computer drive", null, JOptionPane.WARNING_MESSAGE);
+        }else{
+            System.out.println(getUserName() + getDriveType() + getLaptopModel() + "65.55");
+            // Send data to Database
+            try {
+                new BenchMarkDatabase();
+                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, 65.55);
+                BenchMarkDatabase.displayDatabase();
+                ranTest = false;
+            } catch (SQLException ex) {
+                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_lbl_BUploadMouseClicked
  
     public void setLblColor(JLabel lbl){
         lbl.setBackground(new Color(24, 186, 129));
-        
     }
     
     public void resetLblColor(JLabel lbl){
@@ -1339,21 +1616,56 @@ public class Home extends javax.swing.JFrame {
     }                                   
     
     public String getReadWriteMethod(){
-        if(ReadWriteString.equals("1"))
+        if(rb_Sequential.isSelected())
             return "1";
         return "0";
     }
-
+    
+    private String getReadWriteTest() {
+        if(rb_read.isSelected())
+            return "1";
+        return "0";
+    }
+    
     public String getNumberOfTests(){
       return (String) cb_NumberOfTests.getSelectedItem();
     }
 
     public String getFileSize(){
-      return (String) cb_FileSize.getSelectedItem();
+      return (String) cb_fileSize.getSelectedItem();
     }
 
     public String getBlockSize(){
-      return (String) cb_BlockSize.getSelectedItem();
+      return (String) cb_blockSize.getSelectedItem();
+    }
+    
+    public String getUserName(){
+        String nameText = tf_name.getText();
+        if(nameText.equals("  nickname or name") || nameText.isEmpty())
+            //System.out.println("Please enter username");
+            return "0";
+        
+        return nameText;
+    }
+    
+    public String getLaptopModel(){
+        String laptopmodelText = tf_laptopmodel.getText();
+        if(laptopmodelText.equals("  leave blank if you have a desktop") || laptopmodelText.isEmpty())
+            //System.out.println("Please enter laptopmodel");
+            return "0";
+        
+        return laptopmodelText;
+    }
+    
+    public String getDriveType(){
+        String driveText = "SSD";
+        if(rb_ssd.isSelected())
+            driveText = "SSD";
+        else if(rd_hdd.isSelected())
+            driveText = "HDD";
+        else return "0";
+        
+        return driveText;
     }
     
       /**
@@ -1391,19 +1703,20 @@ public class Home extends javax.swing.JFrame {
         });
     }
     
-   // private void setLblHoverOffColor(JLabel lbl) {
-    //    lbl.setBackground(new Color(9,65,109));
-   // }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel ConfigureTest;
+    private javax.swing.JPanel ConfigureTestRead;
     private javax.swing.JPanel Help;
     private javax.swing.JPanel RunConfiguration;
     private javax.swing.JPanel UploadScore;
-    private javax.swing.JComboBox<String> cb_BlockSize;
-    private javax.swing.JComboBox<String> cb_FileSize;
+    private javax.swing.JLabel button_defaultConfiguration;
+    private javax.swing.JLabel button_start;
+    private javax.swing.JLabel button_stop;
     private javax.swing.JComboBox<String> cb_NumberOfTests;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> cb_blockSize;
+    private javax.swing.JComboBox<String> cb_fileSize;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1415,7 +1728,6 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jt_nr;
     private javax.swing.JTextField jt_random;
@@ -1429,24 +1741,49 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_RunTest;
     private javax.swing.JLabel lbl_Sequential;
     private javax.swing.JLabel lbl_UploadScore;
+    private javax.swing.JLabel lbl_avg;
     private javax.swing.JLabel lbl_hdd;
     private javax.swing.JLabel lbl_information;
     private javax.swing.JLabel lbl_laptopmodel;
+    private javax.swing.JLabel lbl_max;
+    private javax.swing.JLabel lbl_min;
     private javax.swing.JLabel lbl_name;
+    private javax.swing.JLabel lbl_read;
+    private javax.swing.JLabel lbl_readTR;
+    private javax.swing.JLabel lbl_scoreResult;
     private javax.swing.JLabel lbl_selectDrive;
-    private javax.swing.JLabel lbl_selectDrive1;
     private javax.swing.JLabel lbl_ssd;
+    private javax.swing.JLabel lbl_transferRate;
+    private javax.swing.JLabel lbl_write;
+    private javax.swing.JLabel lbl_writeTR;
     private javax.swing.JRadioButton rb_RandomAccess;
     private javax.swing.JRadioButton rb_Sequential;
+    private javax.swing.JRadioButton rb_read;
     private javax.swing.JRadioButton rb_ssd;
+    private javax.swing.JRadioButton rb_write;
     private javax.swing.JRadioButton rd_hdd;
     private javax.swing.JSeparator s_laptopmodel;
     private javax.swing.JSeparator s_name;
     private javax.swing.JTextField testtext;
+    private javax.swing.JTextField tf_avgRead;
+    private javax.swing.JTextField tf_avgWrite;
+    private javax.swing.JTextField tf_avgWrite1;
+    private javax.swing.JTextField tf_avgWrite2;
+    private javax.swing.JTextField tf_avgWrite3;
+    private javax.swing.JTextField tf_avgWrite4;
+    private javax.swing.JTextField tf_avgWrite5;
+    private javax.swing.JTextField tf_avgWrite6;
     private javax.swing.JTextField tf_laptopmodel;
+    private javax.swing.JTextField tf_maxRead;
+    private javax.swing.JTextField tf_maxWrite;
+    private javax.swing.JTextField tf_minRead;
+    private javax.swing.JTextField tf_minWrite;
     private javax.swing.JTextField tf_name;
+    private javax.swing.JTextField tf_score;
     // End of variables declaration//GEN-END:variables
 
-    
-
+    private void setIcon() {
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/final_icon_2.png")));
+    }
+ 
 }
