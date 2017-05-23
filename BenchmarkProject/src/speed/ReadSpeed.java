@@ -58,7 +58,7 @@ public class ReadSpeed{
 	
 	/**
 	 * The method reads a file with a given buffer size for a number of times and then computes the minimum
-	 * maximum and average of the scores obtained 
+	 * maximum and average of the scores obtained
 	 */
 	public void read() {
 		access.write(fileSizeGB);       //first write the file that will be used for reading

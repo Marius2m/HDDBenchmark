@@ -1,5 +1,9 @@
 package speed;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
+
 import accesstype.Access;
 import accesstype.RandomAccess;
 import accesstype.SequentialAccess;
@@ -7,48 +11,49 @@ import score.Score;
 
 public class WriteSpeed {
 
-    private static final int REPEAT = 100_000;
     private Access access;
-    private int bufferSize = 2 * 1024 * 1024; //2 MB default   // measured in bytes
+    private int bufferSize = 4 * 1024; 		  //4 KB default
     private String accessType = "SEQ";        //sequential access by default
     private int numTests = 5;                 //5 tests default
-    private int fileSizeGB = 9;               //1 GB file size by default
+    private int fileSizeMB = 512;             //512 MB file size by default
     private Score score;
+    private static final int REPEAT = 4096;
 
-    /*
+    /**
      * Default settings:
-     *      - 2 MB block size
-     *      - sequential acces in file
+     *      - 4 KB block size
+     *      - sequential access in file
      *      - 5 tests
-     *      - 9 GB file size
+     *      - 256 MB file size
      */
     public WriteSpeed() {
-        score = new Score(numTests, fileSizeGB);
+        score = new Score(numTests, fileSizeMB);
         access = new SequentialAccess(numTests);
     }
 
-
-    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeGB) {
+    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeMB){
         this.bufferSize = bufferSize;
         this.accessType = accessType;
         this.numTests = numTests;
-        this.fileSizeGB = fileSizeGB;
-        if (isSequentialFile()) {
-            score = new Score(numTests, fileSizeGB);
-            access = new SequentialAccess(numTests);
-        } else {
-            double size = ((double) bufferSize / 1024 / 1024 / 1024) * REPEAT;
-            score = new Score(numTests, fileSizeGB);
-            access = new RandomAccess(numTests, fileSizeGB);
+        this.fileSizeMB = fileSizeMB;
+        if(isSequentialFile()){
+            score = new Score(numTests, fileSizeMB);
+        	access = new SequentialAccess(numTests);
+        }
+        else{
+        	double size = ((double)bufferSize * REPEAT) /1024/1024;
+         	score = new Score(numTests, size);
+            access = new RandomAccess(REPEAT, numTests);
         }
     }
 
     public void write() {
         for (int i = 0; i < numTests; i++) {
             score.start();
-            access.write(fileSizeGB, bufferSize);
+            access.write(fileSizeMB, bufferSize, false);
             score.stop();
         }
+        access.deleteFile();
     }
 
     public double getAvgScore() {
@@ -64,11 +69,17 @@ public class WriteSpeed {
     }
 
 
-    private boolean isSequentialFile() {
-        if (accessType.toLowerCase().contains("seq"))
+    private boolean isSequentialFile(){
+        if(accessType.toLowerCase().contains("seq"))
             return true;
         else
             return false;
+    }
+    
+    public static void main(String[] args){
+    	WriteSpeed speed = new WriteSpeed(1024 * 1024 , "rand", 1, 512);
+    	speed.write();
+    	System.out.println(speed.getAvgScore() + " " + speed.getMaxScore() + " " + speed.getMinScore());
     }
 
 }
