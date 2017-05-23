@@ -38,7 +38,7 @@ public class Home extends javax.swing.JFrame {
     private boolean isDefaultTextLaptopModel = true;
     private boolean ranTest                  = false;
     
-    private double avgScore;
+    private double avgScore                  = 0;
     
     int xx;
     int xy;
@@ -64,6 +64,8 @@ public class Home extends javax.swing.JFrame {
         
         setLblColor(lbl_ConfigureTest); // Configure Test Panel is the default one
        
+        tf_score.setEditable(false); // Score result is read-only
+
         groupButton(); 
       
     }
@@ -169,6 +171,7 @@ public class Home extends javax.swing.JFrame {
         lbl_BUpload = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        lbl_BViewRanks = new javax.swing.JLabel();
         Help = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -396,15 +399,14 @@ public class Home extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 612, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(0, 11, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         ConfigureTestRead.add(jPanel3);
@@ -412,6 +414,7 @@ public class Home extends javax.swing.JFrame {
 
         button_defaultConfiguration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/button_default_config.png"))); // NOI18N
         button_defaultConfiguration.setText("jLabel2");
+        button_defaultConfiguration.setPreferredSize(new java.awt.Dimension(177, 52));
         button_defaultConfiguration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 button_defaultConfigurationMouseClicked(evt);
@@ -430,7 +433,7 @@ public class Home extends javax.swing.JFrame {
             }
         });
         ConfigureTestRead.add(button_defaultConfiguration);
-        button_defaultConfiguration.setBounds(50, 320, 180, 60);
+        button_defaultConfiguration.setBounds(70, 320, 177, 52);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/separator_line.png"))); // NOI18N
         ConfigureTestRead.add(jLabel2);
@@ -485,9 +488,9 @@ public class Home extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(0, 11, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         RunConfiguration.add(jPanel4);
@@ -516,7 +519,7 @@ public class Home extends javax.swing.JFrame {
             }
         });
         RunConfiguration.add(button_start);
-        button_start.setBounds(65, 319, 177, 52);
+        button_start.setBounds(70, 320, 177, 52);
 
         button_stop.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/stop_button_default.png"))); // NOI18N
         button_stop.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -534,7 +537,7 @@ public class Home extends javax.swing.JFrame {
             }
         });
         RunConfiguration.add(button_stop);
-        button_stop.setBounds(414, 319, 177, 52);
+        button_stop.setBounds(420, 320, 177, 52);
 
         lbl_transferRate.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_transferRate.setText("Transfer Rate");
@@ -580,12 +583,11 @@ public class Home extends javax.swing.JFrame {
         RunConfiguration.add(tf_minWrite);
         tf_minWrite.setBounds(420, 150, 40, 20);
 
-        tf_avgWrite.setEditable(false);
         tf_avgWrite.setBackground(new java.awt.Color(214, 217, 223));
-        tf_avgWrite.setText("MB/sec");
+        tf_avgWrite.setText("0");
         tf_avgWrite.setBorder(null);
         RunConfiguration.add(tf_avgWrite);
-        tf_avgWrite.setBounds(220, 210, 59, 20);
+        tf_avgWrite.setBounds(420, 210, 40, 20);
 
         tf_maxWrite.setEditable(false);
         tf_maxWrite.setBackground(new java.awt.Color(214, 217, 223));
@@ -606,25 +608,26 @@ public class Home extends javax.swing.JFrame {
         RunConfiguration.add(lbl_max);
         lbl_max.setBounds(70, 210, 60, 14);
 
+        tf_avgWrite1.setEditable(false);
         tf_avgWrite1.setBackground(new java.awt.Color(214, 217, 223));
-        tf_avgWrite1.setText("0");
+        tf_avgWrite1.setText("MB/sec");
         tf_avgWrite1.setBorder(null);
         RunConfiguration.add(tf_avgWrite1);
-        tf_avgWrite1.setBounds(420, 210, 40, 20);
+        tf_avgWrite1.setBounds(220, 150, 59, 20);
 
         tf_avgWrite2.setEditable(false);
         tf_avgWrite2.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite2.setText("MB/sec");
         tf_avgWrite2.setBorder(null);
         RunConfiguration.add(tf_avgWrite2);
-        tf_avgWrite2.setBounds(220, 150, 59, 20);
+        tf_avgWrite2.setBounds(220, 180, 59, 20);
 
         tf_avgWrite3.setEditable(false);
         tf_avgWrite3.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite3.setText("MB/sec");
         tf_avgWrite3.setBorder(null);
         RunConfiguration.add(tf_avgWrite3);
-        tf_avgWrite3.setBounds(220, 180, 59, 20);
+        tf_avgWrite3.setBounds(220, 210, 59, 20);
 
         tf_avgWrite4.setEditable(false);
         tf_avgWrite4.setBackground(new java.awt.Color(214, 217, 223));
@@ -649,10 +652,14 @@ public class Home extends javax.swing.JFrame {
 
         jPanel2.add(RunConfiguration, "card2");
 
+        UploadScore.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         lbl_information.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_information.setText("Information");
+        UploadScore.add(lbl_information, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 70, -1, -1));
 
         lbl_name.setText("Name");
+        UploadScore.add(lbl_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 126, -1, -1));
 
         tf_name.setBackground(new java.awt.Color(214, 217, 223));
         tf_name.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
@@ -672,8 +679,11 @@ public class Home extends javax.swing.JFrame {
                 tf_nameMouseClicked(evt);
             }
         });
+        UploadScore.add(tf_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 156, 177, 10));
+        UploadScore.add(s_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 172, 177, 10));
 
         lbl_laptopmodel.setText("Laptop Model");
+        UploadScore.add(lbl_laptopmodel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, -1, -1));
 
         tf_laptopmodel.setBackground(new java.awt.Color(214, 217, 223));
         tf_laptopmodel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
@@ -693,13 +703,17 @@ public class Home extends javax.swing.JFrame {
                 tf_laptopmodelMouseClicked(evt);
             }
         });
+        UploadScore.add(tf_laptopmodel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 220, 177, -1));
+        UploadScore.add(s_laptopmodel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 177, 10));
 
         lbl_selectDrive.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_selectDrive.setText("Select Drive");
+        UploadScore.add(lbl_selectDrive, new org.netbeans.lib.awtextra.AbsoluteConstraints(301, 70, 162, -1));
 
         lbl_ssd.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         lbl_ssd.setText("SSD");
         lbl_ssd.setToolTipText("Solid State Drive");
+        UploadScore.add(lbl_ssd, new org.netbeans.lib.awtextra.AbsoluteConstraints(301, 126, -1, -1));
 
         rb_ssd.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -709,10 +723,12 @@ public class Home extends javax.swing.JFrame {
                 rb_ssdFocusLost(evt);
             }
         });
+        UploadScore.add(rb_ssd, new org.netbeans.lib.awtextra.AbsoluteConstraints(372, 126, -1, -1));
 
         lbl_hdd.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         lbl_hdd.setText("HDD");
         lbl_hdd.setToolTipText("Hard Disk Drive");
+        UploadScore.add(lbl_hdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(301, 154, -1, -1));
 
         rd_hdd.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -722,14 +738,16 @@ public class Home extends javax.swing.JFrame {
                 rd_hddFocusLost(evt);
             }
         });
+        UploadScore.add(rd_hdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(372, 154, -1, -1));
 
         lbl_scoreResult.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_scoreResult.setText("Score Result");
+        UploadScore.add(lbl_scoreResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(499, 70, -1, -1));
 
         tf_score.setBackground(new java.awt.Color(214, 217, 223));
         tf_score.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tf_score.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        tf_score.setText("score");
+        tf_score.setText("score MB/s");
         tf_score.setBorder(null);
         tf_score.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -747,6 +765,7 @@ public class Home extends javax.swing.JFrame {
                 tf_scoreMouseExited(evt);
             }
         });
+        UploadScore.add(tf_score, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 100, 147, 80));
 
         lbl_BUpload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/button_default.png"))); // NOI18N
         lbl_BUpload.setText("jLabel1");
@@ -768,6 +787,7 @@ public class Home extends javax.swing.JFrame {
                 lbl_BUploadMouseReleased(evt);
             }
         });
+        UploadScore.add(lbl_BUpload, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 320, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -792,7 +812,7 @@ public class Home extends javax.swing.JFrame {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(608, Short.MAX_VALUE)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -803,81 +823,27 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        javax.swing.GroupLayout UploadScoreLayout = new javax.swing.GroupLayout(UploadScore);
-        UploadScore.setLayout(UploadScoreLayout);
-        UploadScoreLayout.setHorizontalGroup(
-            UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(UploadScoreLayout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbl_name)
-                    .addComponent(s_name)
-                    .addComponent(lbl_laptopmodel)
-                    .addComponent(s_laptopmodel)
-                    .addComponent(lbl_information)
-                    .addComponent(tf_laptopmodel)
-                    .addComponent(tf_name)
-                    .addComponent(lbl_BUpload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(75, 75, 75)
-                .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(UploadScoreLayout.createSequentialGroup()
-                        .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_hdd)
-                            .addComponent(lbl_ssd))
-                        .addGap(47, 47, 47)
-                        .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rd_hdd)
-                            .addComponent(rb_ssd))
-                        .addGap(0, 64, Short.MAX_VALUE))
-                    .addComponent(lbl_selectDrive, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(36, 36, 36)
-                .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbl_scoreResult, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tf_score))
-                .addGap(54, 54, 54))
-            .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        UploadScoreLayout.setVerticalGroup(
-            UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(UploadScoreLayout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(UploadScoreLayout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_ssd)
-                            .addComponent(rb_ssd))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rd_hdd)
-                            .addComponent(lbl_hdd)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, UploadScoreLayout.createSequentialGroup()
-                        .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(UploadScoreLayout.createSequentialGroup()
-                                .addGroup(UploadScoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lbl_information)
-                                    .addComponent(lbl_selectDrive)
-                                    .addComponent(lbl_scoreResult))
-                                .addGap(34, 34, 34)
-                                .addComponent(lbl_name)
-                                .addGap(12, 12, 12))
-                            .addGroup(UploadScoreLayout.createSequentialGroup()
-                                .addComponent(tf_score, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(5, 5, 5)))
-                        .addComponent(tf_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(s_name, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbl_laptopmodel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tf_laptopmodel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(s_laptopmodel, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
-                .addComponent(lbl_BUpload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
-        );
+        UploadScore.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 650, -1));
+
+        lbl_BViewRanks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/view_ranks_button_default.png"))); // NOI18N
+        lbl_BViewRanks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_BViewRanksMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbl_BViewRanksMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbl_BViewRanksMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbl_BViewRanksMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                lbl_BViewRanksMouseReleased(evt);
+            }
+        });
+        UploadScore.add(lbl_BViewRanks, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 320, -1, -1));
 
         jPanel2.add(UploadScore, "card2");
 
@@ -904,15 +870,14 @@ public class Home extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(602, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 612, Short.MAX_VALUE)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(0, 11, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout HelpLayout = new javax.swing.GroupLayout(Help);
@@ -937,7 +902,7 @@ public class Home extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 644, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1523,42 +1488,59 @@ public class Home extends javax.swing.JFrame {
                 bench.read();
                 
                 ranTest = true;
+                avgScore = bench.getAvgScore();
                 tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgRead.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_avgRead.setText(String.format("%.1f", avgScore));
                 tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(bench.getAvgScore());
+                System.out.println(avgScore);
+                
+                //String score = Double.toString(avgScore)
+                tf_score.setText(Double.toString(avgScore) + " MB/s");
+                bench = null;
             }else if(rb_write.isSelected() == true){ //write test - S E Q
                 WriteSpeed bench = new WriteSpeed(blockSize * 1024, "seq", nrTests, fileSize);
                 bench.write();
                 
                 ranTest = true;
+                avgScore = bench.getAvgScore();
                 tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgWrite.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_avgWrite.setText(String.format("%.1f", avgScore));
                 tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
                 System.out.println(bench.getAvgScore());
+
+                tf_score.setText(Double.toString(avgScore) + " MB/s");
+                bench = null;
             }
-        }/*
+        }
         else if(access == 0){ //Random
             if(rb_read.isSelected() == true){ //read test - R A N D
                 ReadSpeed bench = new ReadSpeed(blockSize * 1024, "rand", nrTests, fileSize);
                 bench.read();
                 
                 ranTest = true;
+                avgScore = bench.getAvgScore();
                 tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgRead.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_avgRead.setText(String.format("%.1f", avgScore));
                 tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(bench.getAvgScore());
+                System.out.println(avgScore);
+                
+                tf_score.setText(Double.toString(avgScore) + " MB/s");
+                bench = null;
             }else if(rb_write.isSelected() == true){ //read test - R A N D
                 WriteSpeed bench = new WriteSpeed(blockSize * 1024, "rand", nrTests, fileSize);
                 bench.write();
                 
                 ranTest = true;
+                avgScore = bench.getAvgScore();
                 tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgWrite.setText(String.format("%.1f", bench.getAvgScore()));
+                tf_avgWrite.setText(String.format("%.1f", avgScore));
                 tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(bench.getAvgScore());
+                System.out.println(avgScore);
+                
+                tf_score.setText(Double.toString(avgScore) + " MB/s");
+                bench = null;
             }
-        }*/
+        }
         String res = "ReadWriteMethod " + access + "...readwrite " + readwrite + "... NrTests " + nrTests + "... File Size " + fileSize + "... Block Size "+ blockSize;
         testtext.setText(res);
     }//GEN-LAST:event_button_startMouseClicked
@@ -1594,7 +1576,7 @@ public class Home extends javax.swing.JFrame {
             // Send data to Database
             try {
                 new BenchMarkDatabase();
-                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, 65.55);
+                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, avgScore);
                 BenchMarkDatabase.displayDatabase();
                 ranTest = false;
             } catch (SQLException ex) {
@@ -1602,6 +1584,39 @@ public class Home extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_lbl_BUploadMouseClicked
+
+    private void lbl_BViewRanksMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BViewRanksMouseEntered
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/view_ranks_button_hover.png"));
+        lbl_BViewRanks.setIcon(IB);
+    }//GEN-LAST:event_lbl_BViewRanksMouseEntered
+
+    private void lbl_BViewRanksMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BViewRanksMouseExited
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/view_ranks_button_default.png"));
+        lbl_BViewRanks.setIcon(IB);
+    }//GEN-LAST:event_lbl_BViewRanksMouseExited
+
+    private void lbl_BViewRanksMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BViewRanksMousePressed
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/view_ranks_button_pressed.png"));
+        lbl_BViewRanks.setIcon(IB);
+    }//GEN-LAST:event_lbl_BViewRanksMousePressed
+
+    private void lbl_BViewRanksMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BViewRanksMouseReleased
+        ImageIcon IB;
+        IB = new ImageIcon(getClass().getResource("/images/view_ranks_button_hover.png"));
+        lbl_BViewRanks.setIcon(IB);
+    }//GEN-LAST:event_lbl_BViewRanksMouseReleased
+
+    private void lbl_BViewRanksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BViewRanksMouseClicked
+        try {
+            new BenchMarkDatabase();
+            BenchMarkDatabase.displayDatabase();
+        } catch (SQLException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_lbl_BViewRanksMouseClicked
  
     public void setLblColor(JLabel lbl){
         lbl.setBackground(new Color(24, 186, 129));
@@ -1732,6 +1747,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JTextField jt_nr;
     private javax.swing.JTextField jt_random;
     private javax.swing.JLabel lbl_BUpload;
+    private javax.swing.JLabel lbl_BViewRanks;
     private javax.swing.JLabel lbl_BlockSize;
     private javax.swing.JLabel lbl_ConfigureTest;
     private javax.swing.JLabel lbl_FileSize;
