@@ -11,38 +11,37 @@ import score.Score;
 
 public class WriteSpeed {
 
+    private static final int REPEAT = 4096;
     private Access access;
-    private int bufferSize = 4 * 1024; 		  //4 KB default
+    private int bufferSize = 4 * 1024;          //4 KB default
     private String accessType = "SEQ";        //sequential access by default
     private int numTests = 5;                 //5 tests default
     private int fileSizeMB = 512;             //512 MB file size by default
     private Score score;
-    private static final int REPEAT = 4096;
 
     /**
      * Default settings:
-     *      - 4 KB block size
-     *      - sequential access in file
-     *      - 5 tests
-     *      - 256 MB file size
+     * - 4 KB block size
+     * - sequential access in file
+     * - 5 tests
+     * - 256 MB file size
      */
     public WriteSpeed() {
         score = new Score(numTests, fileSizeMB);
         access = new SequentialAccess(numTests);
     }
 
-    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeMB){
+    public WriteSpeed(int bufferSize, String accessType, int numTests, int fileSizeMB) {
         this.bufferSize = bufferSize;
         this.accessType = accessType;
         this.numTests = numTests;
         this.fileSizeMB = fileSizeMB;
-        if(isSequentialFile()){
+        if (isSequentialFile()) {
             score = new Score(numTests, fileSizeMB);
-        	access = new SequentialAccess(numTests);
-        }
-        else{
-        	double size = ((double)bufferSize * REPEAT) /1024/1024;
-         	score = new Score(numTests, size);
+            access = new SequentialAccess(numTests);
+        } else {
+            double size = ((double) bufferSize * REPEAT) / 1024 / 1024;
+            score = new Score(numTests, size);
             access = new RandomAccess(REPEAT, numTests);
         }
     }
@@ -69,16 +68,15 @@ public class WriteSpeed {
     }
 
 
-    private boolean isSequentialFile(){
-        if(accessType.toLowerCase().contains("seq"))
+    private boolean isSequentialFile() {
+        if (accessType.toLowerCase().contains("seq"))
             return true;
         else
             return false;
     }
 
-    /*
-    public static void main(String[] args){
-    	WriteSpeed speed = new WriteSpeed(1024 * 1024 , "rand", 1, 512);
+  /*  public static void main(String[] args){
+        WriteSpeed speed = new WriteSpeed(1024 * 1024 , "rand", 1, 1024);
     	speed.write();
     	System.out.println(speed.getAvgScore() + " " + speed.getMaxScore() + " " + speed.getMinScore());
     }
