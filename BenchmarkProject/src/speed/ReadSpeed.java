@@ -12,23 +12,23 @@ import score.Score;
 public class ReadSpeed{
 	
 	private Access access;					
-	private int bufferSize = 2 * 1024 * 1024; //2 MB default 
-	private String accessType = "SEQ";        //sequential access by default
-	private int numTests = 5;                 //5 tests default
-	private int fileSizeGB = 6;			      //1 GB file size by default
+	private int bufferSize = 64 * 1024;       //6 KB default 
+	private String accessType = "seq";        //sequential access by default
+	private int numTests = 3;                 //3 tests default
+	private int fileSizeGB = 6;               //6 GB file size by default
 	private Score score;
 	private static final int REPEAT = 65536;
 	
 	/**
 	 *  Used if benchmark should run with default configurations:
-	 *  	-2 MB block size
+	 *  	-6 KB block size
 	 *  	-sequential access in file
-	 *  	-5 tests in total
-	 *  	-9 GB file size
+	 *  	-3 tests in total
+	 *  	-6 GB file size
 	 */
-	public ReadSpeed() {
-		score = new Score(numTests, fileSizeGB * 1024);
-		access = new SequentialAccess(numTests);      
+	public ReadSpeed() { //asta e constructorul pt default case
+            score = new Score(numTests, fileSizeGB * 1024);
+            access = new SequentialAccess(numTests); 
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class ReadSpeed{
 	
 	/**
 	 * The method reads a file with a given buffer size for a number of times and then computes the minimum
-	 * maximum and average of the scores obtained
+	 * maximum and average of the scores obtained 
 	 */
 	public void read() {
 		access.write(fileSizeGB);       //first write the file that will be used for reading
@@ -89,7 +89,7 @@ public class ReadSpeed{
 	}
 	
 	public static void main(String[] args){
-		ReadSpeed readSpeed = new ReadSpeed(4 * 1024 , "rand", 2, 5);
+		ReadSpeed readSpeed = new ReadSpeed(128 * 1024 , "seq", 1, 8);
 		readSpeed.read();
 		System.out.println(readSpeed.getAvgScore() + " " + readSpeed.getMaxScore() + " " + readSpeed.getMinScore());
 	}

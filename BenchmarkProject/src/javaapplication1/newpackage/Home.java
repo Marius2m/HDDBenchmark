@@ -6,7 +6,7 @@
 package javaapplication1.newpackage;
 
 import database.BenchMarkDatabase;
-import database.Driver;
+import filehandling.FileSystem;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -36,9 +36,8 @@ public class Home extends javax.swing.JFrame {
     public  String  SSDHDDString             = "1";
     private boolean isDefaultTextName        = true;
     private boolean isDefaultTextLaptopModel = true;
-    private boolean ranTest                  = false;
-    
-    private double avgScore                  = 0;
+    private boolean isDefaultTest            = false;
+    private double  avgScore                  = 0;
     
     int xx;
     int xy;
@@ -65,6 +64,8 @@ public class Home extends javax.swing.JFrame {
         setLblColor(lbl_ConfigureTest); // Configure Test Panel is the default one
        
         tf_score.setEditable(false); // Score result is read-only
+        
+        cb_blockSizeWrite.setVisible(false);
 
         groupButton(); 
       
@@ -119,20 +120,17 @@ public class Home extends javax.swing.JFrame {
         lbl_FileSize = new javax.swing.JLabel();
         lbl_BlockSize = new javax.swing.JLabel();
         cb_NumberOfTests = new javax.swing.JComboBox<>();
-        cb_blockSize = new javax.swing.JComboBox<>();
+        cb_blockSizeRead = new javax.swing.JComboBox<>();
+        cb_blockSizeWrite = new javax.swing.JComboBox<>();
+        cb_fileSizeRead = new javax.swing.JComboBox<>();
         cb_fileSize = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         button_defaultConfiguration = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         RunConfiguration = new javax.swing.JPanel();
-        jt_random = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jt_nr = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        testtext = new javax.swing.JTextField();
         button_start = new javax.swing.JLabel();
         button_stop = new javax.swing.JLabel();
         lbl_transferRate = new javax.swing.JLabel();
@@ -328,6 +326,12 @@ public class Home extends javax.swing.JFrame {
         ConfigureTestRead.setLayout(null);
         ConfigureTestRead.add(rb_RandomAccess);
         rb_RandomAccess.setBounds(550, 260, 21, 21);
+
+        rb_Sequential.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rb_SequentialActionPerformed(evt);
+            }
+        });
         ConfigureTestRead.add(rb_Sequential);
         rb_Sequential.setBounds(550, 220, 21, 21);
 
@@ -346,8 +350,20 @@ public class Home extends javax.swing.JFrame {
         lbl_write.setText("Write");
         ConfigureTestRead.add(lbl_write);
         lbl_write.setBounds(410, 180, 70, 14);
+
+        rb_write.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rb_writeMouseClicked(evt);
+            }
+        });
         ConfigureTestRead.add(rb_write);
         rb_write.setBounds(550, 180, 21, 21);
+
+        rb_read.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rb_readMouseClicked(evt);
+            }
+        });
         ConfigureTestRead.add(rb_read);
         rb_read.setBounds(550, 140, 21, 21);
 
@@ -367,12 +383,24 @@ public class Home extends javax.swing.JFrame {
         ConfigureTestRead.add(cb_NumberOfTests);
         cb_NumberOfTests.setBounds(190, 140, 100, 20);
 
-        cb_blockSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "512 bytes", "1 KB", "2 KB", "4 KB", "8 KB", "16 KB", "32 KB", "64 KB", "128 KB", "256 KB", "512 KB", "1 MB", "2 MB", "4 MB", "8 MB", "16 MB", "32 MB" }));
-        cb_blockSize.setSelectedIndex(7);
-        ConfigureTestRead.add(cb_blockSize);
-        cb_blockSize.setBounds(190, 240, 100, 20);
+        cb_blockSizeRead.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "512 bytes", "4 KB", "64 KB", "128 KB", "1 MB" }));
+        ConfigureTestRead.add(cb_blockSizeRead);
+        cb_blockSizeRead.setBounds(190, 240, 100, 20);
 
-        cb_fileSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 GB", "3 GB", "5 GB" }));
+        cb_blockSizeWrite.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "512 bytes", "4 KB", "64 KB", "128 KB", "1 MB" }));
+        cb_blockSizeWrite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_blockSizeWriteActionPerformed(evt);
+            }
+        });
+        ConfigureTestRead.add(cb_blockSizeWrite);
+        cb_blockSizeWrite.setBounds(190, 240, 100, 20);
+
+        cb_fileSizeRead.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "5 GB", "6 GB", "7 GB", "8 GB", "9 GB", "10 GB" }));
+        ConfigureTestRead.add(cb_fileSizeRead);
+        cb_fileSizeRead.setBounds(190, 190, 100, 20);
+
+        cb_fileSize.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 GB", "2 GB", "3 GB", "4 GB", "5 GB" }));
         ConfigureTestRead.add(cb_fileSize);
         cb_fileSize.setBounds(190, 190, 100, 20);
 
@@ -443,22 +471,6 @@ public class Home extends javax.swing.JFrame {
 
         RunConfiguration.setLayout(null);
 
-        jt_random.setText("jTextField2");
-        RunConfiguration.add(jt_random);
-        jt_random.setBounds(560, 250, 59, 20);
-
-        jTextField3.setText("Random/ Seq");
-        RunConfiguration.add(jTextField3);
-        jTextField3.setBounds(440, 250, 101, 20);
-
-        jLabel3.setText("Nr of Tests");
-        RunConfiguration.add(jLabel3);
-        jLabel3.setBounds(440, 280, 101, 14);
-
-        jt_nr.setText("jTextField4");
-        RunConfiguration.add(jt_nr);
-        jt_nr.setBounds(560, 280, 59, 20);
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/normal.png"))); // NOI18N
@@ -495,10 +507,6 @@ public class Home extends javax.swing.JFrame {
 
         RunConfiguration.add(jPanel4);
         jPanel4.setBounds(79, 0, 571, 51);
-
-        testtext.setText("jTextField2");
-        RunConfiguration.add(testtext);
-        testtext.setBounds(70, 250, 360, 68);
 
         button_start.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/start_button_default.png"))); // NOI18N
         button_start.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -542,12 +550,12 @@ public class Home extends javax.swing.JFrame {
         lbl_transferRate.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_transferRate.setText("Transfer Rate");
         RunConfiguration.add(lbl_transferRate);
-        lbl_transferRate.setBounds(270, 60, 110, 22);
+        lbl_transferRate.setBounds(270, 70, 110, 22);
 
         lbl_readTR.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lbl_readTR.setText("Read");
         RunConfiguration.add(lbl_readTR);
-        lbl_readTR.setBounds(180, 110, 40, 14);
+        lbl_readTR.setBounds(180, 130, 40, 14);
 
         tf_minRead.setEditable(false);
         tf_minRead.setBackground(new java.awt.Color(214, 217, 223));
@@ -555,100 +563,100 @@ public class Home extends javax.swing.JFrame {
         tf_minRead.setToolTipText("");
         tf_minRead.setBorder(null);
         RunConfiguration.add(tf_minRead);
-        tf_minRead.setBounds(180, 150, 40, 20);
+        tf_minRead.setBounds(180, 180, 40, 20);
 
         tf_avgRead.setEditable(false);
         tf_avgRead.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgRead.setText("0");
         tf_avgRead.setBorder(null);
         RunConfiguration.add(tf_avgRead);
-        tf_avgRead.setBounds(180, 180, 40, 20);
+        tf_avgRead.setBounds(180, 210, 40, 20);
 
         tf_maxRead.setEditable(false);
         tf_maxRead.setBackground(new java.awt.Color(214, 217, 223));
         tf_maxRead.setText("0");
         tf_maxRead.setBorder(null);
         RunConfiguration.add(tf_maxRead);
-        tf_maxRead.setBounds(180, 210, 40, 20);
+        tf_maxRead.setBounds(180, 240, 40, 20);
 
         lbl_writeTR.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lbl_writeTR.setText("Write");
         RunConfiguration.add(lbl_writeTR);
-        lbl_writeTR.setBounds(420, 110, 33, 17);
+        lbl_writeTR.setBounds(420, 130, 33, 17);
 
         tf_minWrite.setEditable(false);
         tf_minWrite.setBackground(new java.awt.Color(214, 217, 223));
         tf_minWrite.setText("0");
         tf_minWrite.setBorder(null);
         RunConfiguration.add(tf_minWrite);
-        tf_minWrite.setBounds(420, 150, 40, 20);
+        tf_minWrite.setBounds(420, 180, 40, 20);
 
         tf_avgWrite.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite.setText("0");
         tf_avgWrite.setBorder(null);
         RunConfiguration.add(tf_avgWrite);
-        tf_avgWrite.setBounds(420, 210, 40, 20);
+        tf_avgWrite.setBounds(420, 240, 40, 20);
 
         tf_maxWrite.setEditable(false);
         tf_maxWrite.setBackground(new java.awt.Color(214, 217, 223));
         tf_maxWrite.setText("0");
         tf_maxWrite.setBorder(null);
         RunConfiguration.add(tf_maxWrite);
-        tf_maxWrite.setBounds(420, 180, 40, 20);
+        tf_maxWrite.setBounds(420, 210, 40, 20);
 
         lbl_min.setText("Minimum");
         RunConfiguration.add(lbl_min);
-        lbl_min.setBounds(70, 150, 60, 14);
+        lbl_min.setBounds(70, 180, 60, 14);
 
         lbl_avg.setText("Average");
         RunConfiguration.add(lbl_avg);
-        lbl_avg.setBounds(70, 180, 60, 14);
+        lbl_avg.setBounds(70, 210, 60, 14);
 
         lbl_max.setText("Maximum");
         RunConfiguration.add(lbl_max);
-        lbl_max.setBounds(70, 210, 60, 14);
+        lbl_max.setBounds(70, 240, 60, 14);
 
         tf_avgWrite1.setEditable(false);
         tf_avgWrite1.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite1.setText("MB/sec");
         tf_avgWrite1.setBorder(null);
         RunConfiguration.add(tf_avgWrite1);
-        tf_avgWrite1.setBounds(220, 150, 59, 20);
+        tf_avgWrite1.setBounds(220, 180, 59, 20);
 
         tf_avgWrite2.setEditable(false);
         tf_avgWrite2.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite2.setText("MB/sec");
         tf_avgWrite2.setBorder(null);
         RunConfiguration.add(tf_avgWrite2);
-        tf_avgWrite2.setBounds(220, 180, 59, 20);
+        tf_avgWrite2.setBounds(220, 210, 59, 20);
 
         tf_avgWrite3.setEditable(false);
         tf_avgWrite3.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite3.setText("MB/sec");
         tf_avgWrite3.setBorder(null);
         RunConfiguration.add(tf_avgWrite3);
-        tf_avgWrite3.setBounds(220, 210, 59, 20);
+        tf_avgWrite3.setBounds(220, 240, 59, 20);
 
         tf_avgWrite4.setEditable(false);
         tf_avgWrite4.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite4.setText("MB/sec");
         tf_avgWrite4.setBorder(null);
         RunConfiguration.add(tf_avgWrite4);
-        tf_avgWrite4.setBounds(460, 210, 59, 20);
+        tf_avgWrite4.setBounds(460, 240, 59, 20);
 
         tf_avgWrite5.setEditable(false);
         tf_avgWrite5.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite5.setText("MB/sec");
         tf_avgWrite5.setBorder(null);
         RunConfiguration.add(tf_avgWrite5);
-        tf_avgWrite5.setBounds(460, 150, 59, 20);
+        tf_avgWrite5.setBounds(460, 180, 59, 20);
 
         tf_avgWrite6.setEditable(false);
         tf_avgWrite6.setBackground(new java.awt.Color(214, 217, 223));
         tf_avgWrite6.setText("MB/sec");
         tf_avgWrite6.setBorder(null);
         RunConfiguration.add(tf_avgWrite6);
-        tf_avgWrite6.setBounds(460, 180, 59, 20);
+        tf_avgWrite6.setBounds(460, 210, 59, 20);
 
         jPanel2.add(RunConfiguration, "card2");
 
@@ -870,7 +878,7 @@ public class Home extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(0, 612, Short.MAX_VALUE)
+                .addGap(0, 618, Short.MAX_VALUE)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -935,9 +943,19 @@ public class Home extends javax.swing.JFrame {
         Help.setVisible(false);
         
         // Run Test Configuration with our Configuration (or default)
-        if(rb_RandomAccess.isEnabled())
-             jt_random.setText("Random");
-        jt_nr.setText((String) cb_NumberOfTests.getSelectedItem());
+        String s = "";
+        if(rb_RandomAccess.isSelected())
+            s =  s + " Random ";//jt_random.setText("Random");
+        if(rb_Sequential.isSelected())
+            s = s + " Sequential ";
+        if(rb_write.isSelected())
+            s = s + " Write ";
+        if(rb_read.isSelected())
+            s = s + " Read ";
+        s = s + cb_NumberOfTests.getSelectedItem() + " " + cb_blockSizeRead.getSelectedItem() + " " + cb_blockSizeWrite.getSelectedItem() + 
+                " " + cb_fileSizeRead.getSelectedItem() + " " + cb_fileSize.getSelectedItem();
+       // testtext.setText(s);
+       // jt_nr.setText((String) cb_NumberOfTests.getSelectedItem());
 
     }//GEN-LAST:event_lbl_RunTestMouseClicked
 
@@ -1459,13 +1477,31 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_button_defaultConfigurationMouseReleased
 
     private void button_defaultConfigurationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_defaultConfigurationMouseClicked
-        if(rb_RandomAccess.isSelected())
+        isDefaultTest = true;
+        
+        if(rb_RandomAccess.isSelected()){
             rb_Sequential.setSelected(true);
-        if(rb_write.isSelected())
+            cb_fileSize.setVisible(false);
+            cb_fileSizeRead.setVisible(true);
+            cb_blockSizeWrite.setVisible(false);
+            cb_blockSizeRead.setVisible(true);
+        }
+        if(rb_write.isSelected()){
             rb_read.setSelected(true);
-        cb_NumberOfTests.setSelectedIndex(0);
-        cb_fileSize.setSelectedIndex(0);
-        cb_blockSize.setSelectedIndex(0);
+            cb_fileSize.setVisible(false);
+            cb_fileSizeRead.setVisible(true);
+            cb_blockSizeWrite.setVisible(false);
+            cb_blockSizeRead.setVisible(true);
+        }
+        
+        cb_NumberOfTests.setSelectedIndex(2); // 
+        //cb_fileSize.setSelectedIndex(0);
+        cb_fileSizeRead.setSelectedIndex(1);
+        cb_blockSizeRead.setSelectedIndex(2);
+        //cb_blockSizeWrite.setSelectedIndex(0);
+        JOptionPane.showMessageDialog(null, "The test is now configured with default settings:\nSequential Reading of a 6GB file, using a 64KB buffer", null, JOptionPane.PLAIN_MESSAGE);
+        //JOptionPane.showMessageDialog(null, "Please run a test first", null, JOptionPane.WARNING_MESSAGE);
+        
     }//GEN-LAST:event_button_defaultConfigurationMouseClicked
 
     /**
@@ -1477,72 +1513,89 @@ public class Home extends javax.swing.JFrame {
         access = Integer.parseInt(getReadWriteMethod());
         readwrite = Integer.parseInt(getReadWriteTest());
         nrTests = Integer.parseInt(getNumberOfTests());
-        fileSize = Integer.parseInt((getFileSize()).split(" ")[0]);
-        blockSize = Integer.parseInt((getBlockSize().split(" ")[0]));
+        //fileSize = Integer.parseInt((getFileSize()).split(" ")[0]);
         
-        if(access == 1){ //Sequential
-            if(rb_read.isSelected() == true){ //read test - S E Q
-                ReadSpeed bench = new ReadSpeed(blockSize * 1024, "seq", nrTests, fileSize);
-                //Thread runThread = new Thread();
-               // runThread.start();
-                bench.read();
-                
-                ranTest = true;
-                avgScore = bench.getAvgScore();
-                tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgRead.setText(String.format("%.1f", avgScore));
-                tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(avgScore);
-                
-                //String score = Double.toString(avgScore)
-                tf_score.setText(Double.toString(avgScore) + " MB/s");
-                bench = null;
-            }else if(rb_write.isSelected() == true){ //write test - S E Q
-                WriteSpeed bench = new WriteSpeed(blockSize * 1024, "seq", nrTests, fileSize);
-                bench.write();
-                
-                ranTest = true;
-                avgScore = bench.getAvgScore();
-                tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgWrite.setText(String.format("%.1f", avgScore));
-                tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(bench.getAvgScore());
+        if(isDefaultTest == true){
+            ReadSpeed defaultTest = new ReadSpeed();
+            defaultTest.read(); 
+            
+            avgScore = defaultTest.getAvgScore();
+            tf_minRead.setText(String.format("%.1f", defaultTest.getMinScore()));
+            tf_avgRead.setText(String.format("%.1f", avgScore));
+            tf_maxRead.setText(String.format("%.1f", defaultTest.getMaxScore()));
+            System.out.println(avgScore);
+            defaultTest = null;
+        }else{ //isDefaultTest == false 
+            if(access == 1){ //Sequential
+                if(rb_read.isSelected() == true){ //read test - S E Q
+                    blockSize = getBlockSizeRead();
+                    fileSize = Integer.parseInt((getFileSizeRead()).split(" ")[0]);
 
-                tf_score.setText(Double.toString(avgScore) + " MB/s");
-                bench = null;
+                    ReadSpeed bench = new ReadSpeed(blockSize, "seq", nrTests, fileSize);
+                    bench.read();
+
+                    avgScore = bench.getAvgScore();
+                    tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
+                    tf_avgRead.setText(String.format("%.1f", avgScore));
+                    tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
+                    System.out.println(avgScore);
+
+                    //String score = Double.toString(avgScore)
+                    tf_score.setText(Double.toString(avgScore) + " MB/s");
+                    bench = null;
+                }else if(rb_write.isSelected() == true){ //write test - S E Q
+                    blockSize = getBlockSizeWrite();
+                    fileSize = Integer.parseInt((getFileSize()).split(" ")[0]);
+
+                    WriteSpeed bench = new WriteSpeed(blockSize, "seq", nrTests, fileSize * 1024);
+                    bench.write();
+
+                    avgScore = bench.getAvgScore();
+                    tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
+                    tf_avgWrite.setText(String.format("%.1f", avgScore));
+                    tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
+                    System.out.println(bench.getAvgScore());
+
+                    tf_score.setText(Double.toString(avgScore) + " MB/s");
+                    bench = null;
+                }
+            }
+            else if(access == 0){ //Random
+                if(rb_read.isSelected() == true){ //read test - R A N D
+                    blockSize = getBlockSizeRead();
+                    fileSize = Integer.parseInt((getFileSizeRead()).split(" ")[0]);
+
+                    ReadSpeed bench = new ReadSpeed(blockSize, "rand", nrTests, fileSize);
+                    bench.read();
+
+                    avgScore = bench.getAvgScore();
+                    tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
+                    tf_avgRead.setText(String.format("%.1f", avgScore));
+                    tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
+                    System.out.println(avgScore);
+
+                    tf_score.setText(Double.toString(avgScore) + " MB/s");
+                    bench = null;
+                }else if(rb_write.isSelected() == true){ //read test - R A N D
+                    blockSize = getBlockSizeWrite();
+                    fileSize = Integer.parseInt((getFileSize()).split(" ")[0]);
+
+                    WriteSpeed bench = new WriteSpeed(blockSize, "rand", nrTests, fileSize * 1024);
+                    bench.write();
+
+                    avgScore = bench.getAvgScore();
+                    tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
+                    tf_avgWrite.setText(String.format("%.1f", avgScore));
+                    tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
+                    System.out.println(avgScore);
+
+                    tf_score.setText(Double.toString(avgScore) + " MB/s");
+                    bench = null;
+                }
             }
         }
-        else if(access == 0){ //Random
-            if(rb_read.isSelected() == true){ //read test - R A N D
-                ReadSpeed bench = new ReadSpeed(blockSize * 1024, "rand", nrTests, fileSize);
-                bench.read();
-                
-                ranTest = true;
-                avgScore = bench.getAvgScore();
-                tf_minRead.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgRead.setText(String.format("%.1f", avgScore));
-                tf_maxRead.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(avgScore);
-                
-                tf_score.setText(Double.toString(avgScore) + " MB/s");
-                bench = null;
-            }else if(rb_write.isSelected() == true){ //read test - R A N D
-                WriteSpeed bench = new WriteSpeed(blockSize * 1024, "rand", nrTests, fileSize);
-                bench.write();
-                
-                ranTest = true;
-                avgScore = bench.getAvgScore();
-                tf_minWrite.setText(String.format("%.1f", bench.getMinScore()));
-                tf_avgWrite.setText(String.format("%.1f", avgScore));
-                tf_maxWrite.setText(String.format("%.1f", bench.getMaxScore()));
-                System.out.println(avgScore);
-                
-                tf_score.setText(Double.toString(avgScore) + " MB/s");
-                bench = null;
-            }
-        }
-        String res = "ReadWriteMethod " + access + "...readwrite " + readwrite + "... NrTests " + nrTests + "... File Size " + fileSize + "... Block Size "+ blockSize;
-        testtext.setText(res);
+        //String res = "ReadWriteMethod " + access + "...readwrite " + readwrite + "... NrTests " + nrTests + "... File Size " + "... Block Size "+ getBlockSizeRead() + "  <block size> " + getBlockSizeWrite();
+        //testtext.setText(res);
     }//GEN-LAST:event_button_startMouseClicked
 
     private void lbl_BUploadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_BUploadMouseClicked
@@ -1555,8 +1608,8 @@ public class Home extends javax.swing.JFrame {
         laptopModel = getLaptopModel();
            
         // Check user input
-        if(ranTest == false){
-             JOptionPane.showMessageDialog(null, "Please run a test first", null, JOptionPane.WARNING_MESSAGE);
+        if(isDefaultTest == false){
+            JOptionPane.showMessageDialog(null, "Please run a default test first", null, JOptionPane.WARNING_MESSAGE);
         }else if(userName.equals("0") && laptopModel.equals("0") && driveType.equals("0")){
             JOptionPane.showMessageDialog(null, "Please fill the empty spaces and select the\ntype of you computer drive", null, JOptionPane.WARNING_MESSAGE);
         }else if(userName.equals("0") && laptopModel.equals("0")){
@@ -1572,13 +1625,13 @@ public class Home extends javax.swing.JFrame {
         }else if(driveType.equals("0")){
             JOptionPane.showMessageDialog(null, "Please select the type of your computer drive", null, JOptionPane.WARNING_MESSAGE);
         }else{
-            System.out.println(getUserName() + getDriveType() + getLaptopModel() + "65.55");
+            System.out.println(getUserName() + getDriveType() + getLaptopModel() + avgScore);
             // Send data to Database
             try {
                 new BenchMarkDatabase();
-                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, avgScore);
+                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, System.getProperty("os.name"), avgScore);
                 BenchMarkDatabase.displayDatabase();
-                ranTest = false;
+                isDefaultTest = false;
             } catch (SQLException ex) {
                 Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1617,6 +1670,37 @@ public class Home extends javax.swing.JFrame {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lbl_BViewRanksMouseClicked
+
+    private void cb_blockSizeWriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_blockSizeWriteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cb_blockSizeWriteActionPerformed
+
+    private void rb_readMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rb_readMouseClicked
+        //if(rb_read.isSelected() == true){
+        //}else{
+            cb_blockSizeRead.setVisible(true);
+            cb_blockSizeWrite.setVisible(false);
+            
+            cb_fileSizeRead.setVisible(true);
+            cb_fileSize.setVisible(false);
+        //}        // TODO add your handling code here:
+    }//GEN-LAST:event_rb_readMouseClicked
+
+    private void rb_writeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rb_writeMouseClicked
+        //if(rb_write.isSelected() == true){
+        //}else{
+            cb_blockSizeRead.setVisible(false);
+            cb_blockSizeWrite.setVisible(true);
+            
+            cb_fileSizeRead.setVisible(false);
+            cb_fileSize.setVisible(true);
+       // }
+// TODO add your handling code here:
+    }//GEN-LAST:event_rb_writeMouseClicked
+
+    private void rb_SequentialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_SequentialActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rb_SequentialActionPerformed
  
     public void setLblColor(JLabel lbl){
         lbl.setBackground(new Color(24, 186, 129));
@@ -1647,13 +1731,42 @@ public class Home extends javax.swing.JFrame {
     }
 
     public String getFileSize(){
-      return (String) cb_fileSize.getSelectedItem();
+        return (String) cb_fileSize.getSelectedItem();
     }
 
-    public String getBlockSize(){
-      return (String) cb_blockSize.getSelectedItem();
+    public String getFileSizeRead(){
+        return (String) cb_fileSizeRead.getSelectedItem();
     }
     
+    public int getBlockSizeRead(){
+        String blockSizeString = (String) cb_blockSizeRead.getSelectedItem();
+        int blockSizeDouble = Integer.parseInt(blockSizeString.split(" ")[0]);
+        String blockType = blockSizeString.split(" ")[1];
+        System.out.println("BLOCK SIZE READ: " + blockType);
+        switch (blockType) {
+            case "bytes":
+                return blockSizeDouble;
+            case "KB":
+                return blockSizeDouble * 1024;
+            default:
+                return blockSizeDouble * 1024 * 1024;
+        }
+    }
+    
+    public int getBlockSizeWrite(){
+        String blockSizeString = (String) cb_blockSizeWrite.getSelectedItem();
+        int blockSizeDouble = Integer.parseInt(blockSizeString.split(" ")[0]);
+        String blockType = blockSizeString.split(" ")[1];
+        System.out.println("BLOCK SIZE WRITE: " + blockType);
+        switch (blockType) {
+            case "bytes":
+                return blockSizeDouble;
+            case "KB":
+                return blockSizeDouble * 1024;
+            default:
+                return blockSizeDouble * 1024 * 1024;
+        }
+    }
     public String getUserName(){
         String nameText = tf_name.getText();
         if(nameText.equals("  nickname or name") || nameText.isEmpty())
@@ -1728,11 +1841,12 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel button_start;
     private javax.swing.JLabel button_stop;
     private javax.swing.JComboBox<String> cb_NumberOfTests;
-    private javax.swing.JComboBox<String> cb_blockSize;
+    private javax.swing.JComboBox<String> cb_blockSizeRead;
+    private javax.swing.JComboBox<String> cb_blockSizeWrite;
     private javax.swing.JComboBox<String> cb_fileSize;
+    private javax.swing.JComboBox<String> cb_fileSizeRead;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1743,9 +1857,6 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jt_nr;
-    private javax.swing.JTextField jt_random;
     private javax.swing.JLabel lbl_BUpload;
     private javax.swing.JLabel lbl_BViewRanks;
     private javax.swing.JLabel lbl_BlockSize;
@@ -1780,7 +1891,6 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JRadioButton rd_hdd;
     private javax.swing.JSeparator s_laptopmodel;
     private javax.swing.JSeparator s_name;
-    private javax.swing.JTextField testtext;
     private javax.swing.JTextField tf_avgRead;
     private javax.swing.JTextField tf_avgWrite;
     private javax.swing.JTextField tf_avgWrite1;

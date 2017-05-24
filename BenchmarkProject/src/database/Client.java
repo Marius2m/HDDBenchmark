@@ -1,14 +1,14 @@
 package database;
 
+import database.BenchMarkDatabase;
 import java.sql.SQLException;
 
 public class Client {
 
 	public static void main(String[] args) throws SQLException {
 		new BenchMarkDatabase();
-		BenchMarkDatabase.insertRow("Popescu", "HDD", "Asus Brutus", 88.9);
+		BenchMarkDatabase.insertRow("Stefanov", "Google Chromebook 2017 Nice Edition", "SSD", "Windows 10", 899.359);
 		BenchMarkDatabase.displayDatabase();
-		//updates:dynamic table search + column header click-sort
 		
 
 	}

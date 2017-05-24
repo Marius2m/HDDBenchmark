@@ -17,7 +17,7 @@ public class NewClass {
                 //a = h.getReadWriteMethod();
                 b = h.getNumberOfTests();
                 c = h.getFileSize();
-                d = h.getBlockSize();
-                System.out.println("\n" + b + "\n" + c + "\n" + d);
+               
+               // System.out.println("\n" + b + "\n" + c + "\n" + d);
     }
 }

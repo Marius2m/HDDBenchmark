@@ -63,7 +63,7 @@ public class SequentialAccess extends Access {
 	        byte[] buf = new byte[bufferSize];
 
 	        try {
-	            out = new BufferedOutputStream(new FileOutputStream(file));    //get buffered file output stream for writing in the file
+	            out = new BufferedOutputStream(new FileOutputStream(file), bufferSize);    //get buffered file output stream for writing in the file
 	            while (crntWrittenSize < fSize) {          //continue writing until the file size was reached
 	                fillBuffer(buf);                     //add random bytes into a buffer of the given size
 	                out.write(buf);                     //write these bytes through the channel into the file

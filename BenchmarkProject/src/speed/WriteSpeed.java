@@ -76,10 +76,10 @@ public class WriteSpeed {
             return false;
     }
     
-    public static void main(String[] args){
-    	WriteSpeed speed = new WriteSpeed(1024 * 1024 , "rand", 1, 512);
+  /*  public static void main(String[] args){
+    	WriteSpeed speed = new WriteSpeed(1024 * 1024 , "rand", 1, 1024);
     	speed.write();
     	System.out.println(speed.getAvgScore() + " " + speed.getMaxScore() + " " + speed.getMinScore());
     }
-
+*/
 }
