@@ -29,8 +29,8 @@ public class FileSystem {
         username = System.getProperty("user.name");
     }
 
-    private void getOS() {
-        os = System.getProperty("os.name");
+    public String getOS() {
+        return os = System.getProperty("os.name");
     }
 
     private void pathBuilder() {
