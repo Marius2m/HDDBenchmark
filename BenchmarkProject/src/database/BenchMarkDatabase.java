@@ -14,13 +14,13 @@ public class BenchMarkDatabase {
 
     //Adds new record in table, takes database's table's columns as parameters
     public static void insertRow(String Nickname, String Drive_Type, String Laptop_Desktop_Model, Double Score) throws SQLException {
-        PreparedStatement insertRow = myConn.prepareStatement("insert into benchmark_hdd (Nickname, Drive_Type, Laptop_Desktop_Model, Score) values (?, ?, ?, ?)");
-        insertRow.setString(1, Nickname);
-        insertRow.setString(2, Drive_Type);
-        insertRow.setString(3, Laptop_Desktop_Model);
-        insertRow.setDouble(4, Score);
+        PreparedStatement prStmt = myConn.prepareStatement("insert into benchmark_hdd (Nickname, Drive_Type, Laptop_Desktop_Model, Score) values (?, ?, ?, ?)");
+        prStmt.setString(1, Nickname);
+        prStmt.setString(2, Drive_Type);
+        prStmt.setString(3, Laptop_Desktop_Model);
+        prStmt.setDouble(4, Score);
 
-        insertRow.executeUpdate();
+        prStmt.executeUpdate();
     }
 
     public static void printRows() throws SQLException {
@@ -29,6 +29,12 @@ public class BenchMarkDatabase {
         while (myRS.next()) {
             System.out.println(myRS.getInt(1) + " " + myRS.getString(2) + " " + myRS.getString(3) + " " + myRS.getString(4) + " " + myRS.getDouble(5));
         }
+    }
+
+    //Displays database content into a JFrame as a JTable
+
+    public static void displayDatabase() throws SQLException {
+        new DatabaseTable().DisplayTable(myStmt);
     }
 
 }

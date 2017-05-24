@@ -87,11 +87,11 @@ public class ReadSpeed{
 		else 
 			return false;
 	}
-	
+	/*
 	public static void main(String[] args){
 		ReadSpeed readSpeed = new ReadSpeed(4 * 1024 , "rand", 2, 5);
 		readSpeed.read();
 		System.out.println(readSpeed.getAvgScore() + " " + readSpeed.getMaxScore() + " " + readSpeed.getMinScore());
 	}
-
+*/
 }
