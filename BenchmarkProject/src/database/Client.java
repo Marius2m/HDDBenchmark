@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 package database;
 
 import database.BenchMarkDatabase;
-=======
->>>>>>> origin/master
 import java.sql.SQLException;
 
 public class Client {

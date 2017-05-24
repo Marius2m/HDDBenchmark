@@ -28,11 +28,9 @@ public class Score {
     }
 
     public void stop() {
-        double time = timer.stop();
-        time = time /(1000_000_000);
-
+        long time = timer.stop();
         double score;
-        score = fileSize / time ;  // MB/s
+        score = fileSize / ((double)time / (1000 * 1000 * 1000));  // MB/s
         avgSpeed += score;
 
         if (score < minSpeed) minSpeed = score;
