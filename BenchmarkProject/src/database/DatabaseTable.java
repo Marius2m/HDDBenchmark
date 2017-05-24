@@ -1,5 +1,3 @@
-package database;
-
 import java.awt.*;
 import java.sql.*;
 import java.util.Comparator;

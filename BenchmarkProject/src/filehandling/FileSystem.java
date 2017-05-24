@@ -6,28 +6,36 @@ import java.io.RandomAccessFile;
 
 public class FileSystem {
 
+    private static int cnt = 0;
     private String username;
     private String os;
     private String desktopPath;
     private String path;
-    private static int cnt = 0;
 
     public FileSystem() {
         pathBuilder();
     }
 
+<<<<<<< HEAD
     public String getFilePath(){
     	path = desktopPath + File.separator + "bench" + cnt + ".dat";
+=======
+    public String getFilePath() {
+        path = desktopPath + File.separator + "bench" + cnt + ".dat";
+        //path = "/Volumes/Whatever" + File.separator + "bench" + cnt + ".dat";       //testing path
+        //path = "/Volumes/Kingston_64" + File.separator + "bench" + cnt + ".dat";       //testing path
+        //path = "/Volumes/Kingston1" + File.separator + "bench" + cnt + ".dat";       //testing path
+>>>>>>> origin/master
         cnt++;
         return path;
     }
-    
+
     private void getUsername() {
         username = System.getProperty("user.name");
     }
 
-    private void getOS() {
-        os = System.getProperty("os.name");
+    public String getOS() {
+        return os = System.getProperty("os.name");
     }
 
     private void pathBuilder() {
@@ -50,9 +58,9 @@ public class FileSystem {
     public boolean deleteFile(File file) {
         return file.delete();  //returns true if file was successfully deleted
     }
-    
-    public void endTests(){
-    	cnt = 0;
+
+    public void endTests() {
+        cnt = 0;
     }
-    
+
 }
