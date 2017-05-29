@@ -1,6 +1,0 @@
-Sequential : -Write : 512/ 1 K/ 4 K/ 32 K/ 128 K
-	     -Read  : 4 K/ 64 K/ 128 K/ 1 M/ 4 M
-
-
-Random: -Write : 512/ 4 K/ 64 K/ 256 K/ 1 M 
-	-Read  : 512/ 4 K/ 64 K/ 256 K/ 1 M

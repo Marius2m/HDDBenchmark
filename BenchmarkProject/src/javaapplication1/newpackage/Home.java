@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import speed.ReadSpeed;
 import speed.WriteSpeed;
 import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
 
 /**
  *
@@ -65,8 +66,18 @@ public class Home extends javax.swing.JFrame {
        
         tf_score.setEditable(false); // Score result is read-only
         
+        //Preconfigured Initial Start
+        cb_NumberOfTests.setSelectedIndex(2);
+        cb_fileSizeRead.setSelectedIndex(1);
+        cb_blockSizeRead.setSelectedIndex(2);
         cb_blockSizeWrite.setVisible(false);
-
+        
+        //How to use page is visibile initially
+        jT_Developers.setVisible(false);
+        jT_howToUse.setEditable(false);
+        lbl_howToUse.setForeground(new Color(24, 186, 129));
+        lbl_Developers.setForeground(new Color(168, 168, 168));
+        
         groupButton(); 
       
     }
@@ -173,6 +184,10 @@ public class Home extends javax.swing.JFrame {
         Help = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
+        lbl_Developers = new javax.swing.JLabel();
+        jT_Developers = new javax.swing.JTextArea();
+        lbl_howToUse = new javax.swing.JLabel();
+        jT_howToUse = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -855,6 +870,8 @@ public class Home extends javax.swing.JFrame {
 
         jPanel2.add(UploadScore, "card2");
 
+        Help.setLayout(null);
+
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/normal.png"))); // NOI18N
@@ -878,8 +895,9 @@ public class Home extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(0, 618, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(608, Short.MAX_VALUE)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -888,18 +906,45 @@ public class Home extends javax.swing.JFrame {
                 .addGap(0, 11, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout HelpLayout = new javax.swing.GroupLayout(Help);
-        Help.setLayout(HelpLayout);
-        HelpLayout.setHorizontalGroup(
-            HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        HelpLayout.setVerticalGroup(
-            HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(HelpLayout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 349, Short.MAX_VALUE))
-        );
+        Help.add(jPanel5);
+        jPanel5.setBounds(0, 0, 650, 51);
+
+        lbl_Developers.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_Developers.setText("Developers");
+        lbl_Developers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_DevelopersMouseClicked(evt);
+            }
+        });
+        Help.add(lbl_Developers);
+        lbl_Developers.setBounds(290, 60, 86, 22);
+
+        jT_Developers.setEditable(false);
+        jT_Developers.setBackground(new java.awt.Color(214, 217, 223));
+        jT_Developers.setColumns(20);
+        jT_Developers.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jT_Developers.setRows(5);
+        jT_Developers.setText("Leonard FILIP\n\nIulia JURCUȚA\n\nMarius MIRCEA\n\nGeorge OPREA\n\nNadina ȘTREANGĂ");
+        jT_Developers.setBorder(null);
+        Help.add(jT_Developers);
+        jT_Developers.setBounds(290, 140, 116, 150);
+
+        lbl_howToUse.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_howToUse.setText("How to use the benchmark");
+        lbl_howToUse.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbl_howToUseMouseClicked(evt);
+            }
+        });
+        Help.add(lbl_howToUse);
+        lbl_howToUse.setBounds(50, 60, 240, 22);
+
+        jT_howToUse.setColumns(20);
+        jT_howToUse.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jT_howToUse.setRows(5);
+        jT_howToUse.setText("     The benchmark allows both reading writing test (sequentially, or random accessing). Reading is useful\nfor knowing how fast (long) does it take to open (read) something from our device. Writing is quite\nthe opposite, it tells how fast (long) it takes to save (write) something to our device\n\n   1. Go to Configure Test screen\n   2. Select a number of tests (the more tests you choose, the more accurate results, but the more it \ntakes to finish the test)\n   2. Select a file Size (increases the accuracy)\n   3. Block size (the higher the block size, the higher the speed)\n   4. Pick either a read test or a write test\n   5. Under Access pick either Sequential (reads records in order) or Random (reads records in any order)\n   6. The test can now be ran simply by going into Run Configuration page and clicking the Start button\n   7. For the benchmark to finish, it will take some time depending on your hardware\n* 8. After the test was finished, you may upload your score and compare it with other users\n\n* - in order to upload your score you must run the test with default settings (simply by clicking the \nSet Default Configurations button)");
+        Help.add(jT_howToUse);
+        jT_howToUse.setBounds(20, 110, 600, 270);
 
         jPanel2.add(Help, "card2");
 
@@ -1523,14 +1568,22 @@ public class Home extends javax.swing.JFrame {
             tf_minRead.setText(String.format("%.1f", defaultTest.getMinScore()));
             tf_avgRead.setText(String.format("%.1f", avgScore));
             tf_maxRead.setText(String.format("%.1f", defaultTest.getMaxScore()));
+            
+            //String score = Double.toString(avgScore)
+            tf_score.setText(Double.toString(avgScore) + " MB/s");
             System.out.println(avgScore);
             defaultTest = null;
+                        JOptionPane msg = new JOptionPane("Test has finished!", JOptionPane.WARNING_MESSAGE);
+
+            //dlg.setVisible(false);
         }else{ //isDefaultTest == false 
             if(access == 1){ //Sequential
                 if(rb_read.isSelected() == true){ //read test - S E Q
                     blockSize = getBlockSizeRead();
                     fileSize = Integer.parseInt((getFileSizeRead()).split(" ")[0]);
-
+                    if(blockSize == 64 * 1024 && fileSize == 6 && nrTests == 3)
+                        isDefaultTest = true;
+                    
                     ReadSpeed bench = new ReadSpeed(blockSize, "seq", nrTests, fileSize);
                     bench.read();
 
@@ -1629,7 +1682,7 @@ public class Home extends javax.swing.JFrame {
             // Send data to Database
             try {
                 new BenchMarkDatabase();
-                BenchMarkDatabase.insertRow(userName, driveType, laptopModel, System.getProperty("os.name"), avgScore);
+                BenchMarkDatabase.insertRow(userName, laptopModel, driveType, System.getProperty("os.name"), avgScore);
                 BenchMarkDatabase.displayDatabase();
                 isDefaultTest = false;
             } catch (SQLException ex) {
@@ -1701,6 +1754,25 @@ public class Home extends javax.swing.JFrame {
     private void rb_SequentialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rb_SequentialActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rb_SequentialActionPerformed
+
+    //Switch to Developers Sub-Page
+    private void lbl_DevelopersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_DevelopersMouseClicked
+        jT_howToUse.setVisible(false);
+        jT_Developers.setVisible(true);
+        lbl_Developers.setForeground(new Color(24, 186, 129));
+        lbl_howToUse.setForeground(new Color(168, 168, 168));  
+        
+        // Still need to do hovering 
+    }//GEN-LAST:event_lbl_DevelopersMouseClicked
+
+    private void lbl_howToUseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_howToUseMouseClicked
+        jT_howToUse.setVisible(true);
+        jT_Developers.setVisible(false);
+        lbl_howToUse.setForeground(new Color(24, 186, 129));
+        lbl_Developers.setForeground(new Color(168, 168, 168));  
+
+        // Still need to do hovering 
+    }//GEN-LAST:event_lbl_howToUseMouseClicked
  
     public void setLblColor(JLabel lbl){
         lbl.setBackground(new Color(24, 186, 129));
@@ -1857,10 +1929,13 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JTextArea jT_Developers;
+    private javax.swing.JTextArea jT_howToUse;
     private javax.swing.JLabel lbl_BUpload;
     private javax.swing.JLabel lbl_BViewRanks;
     private javax.swing.JLabel lbl_BlockSize;
     private javax.swing.JLabel lbl_ConfigureTest;
+    private javax.swing.JLabel lbl_Developers;
     private javax.swing.JLabel lbl_FileSize;
     private javax.swing.JLabel lbl_Help;
     private javax.swing.JLabel lbl_NumberOfTests;
@@ -1870,6 +1945,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_UploadScore;
     private javax.swing.JLabel lbl_avg;
     private javax.swing.JLabel lbl_hdd;
+    private javax.swing.JLabel lbl_howToUse;
     private javax.swing.JLabel lbl_information;
     private javax.swing.JLabel lbl_laptopmodel;
     private javax.swing.JLabel lbl_max;
